@@ -2,6 +2,7 @@
 
 from app import db
 from sqlalchemy.dialects.postgresql import JSON
+import datetime
 
 #-----------------------------------------------------------------------------#
 # models match to tables in postgres
@@ -20,7 +21,7 @@ class Country(db.Model):
         self.iso_code = iso_code
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
+        return '<id Country {}>'.format(self.id)
     
 
 class Address(db.Model):
@@ -36,24 +37,24 @@ class Address(db.Model):
     address_line_2 = db.Column(db.String(150))
     address_line_3 = db.Column(db.String(150))
     state_region_county = db.Column(db.String(150))
-    country = (db.Integer, db.ForeignKey(Country.id))
+    country_id = db.Column(db.Integer, db.ForeignKey(Country.id))
     post_zip_code = db.Column(db.String(30))
-    created = db.Column(db.TIMESTAMP(), nullable=False)
-    
+    created = db.Column(db.TIMESTAMP(), nullable=False, default=datetime.datetime.utcnow)
+
     def __init__(self, address_id, public_id, house_name, house_number,
                  address_line_1, address_line_2, address_line_3,
-                 state_region_county, country, post_zip_code):
+                 state_region_county, country_id, post_zip_code):
         self.address_id = address_id
         self.public_id = public_id
         self.house_name = house_name
-        self.house_number = house_number    
+        self.house_number = house_number
         self.address_line_1 = address_line_1
         self.address_line_2 = address_line_2
         self.address_line_3 = address_line_3
         self.state_region_county = state_region_county
-        self.country = country
+        self.country_id = country_id
         self.post_zip_code = post_zip_code
 
     def __repr__(self):
-        return '<id {}>'.format(self.id)
+        return '<id Address {}>'.format(self.id)
 

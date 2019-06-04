@@ -12,35 +12,6 @@ def only_json():
         abort(400)
 
 # -----------------------------------------------------------------------------
-'''
-def require_access_level(access_level,request):
-    def actual_decorator(f):
-        @wraps(f)
-        def decorated(*args, **kwargs):
-
-            token = request.headers.get('x-access-token')
-
-            if not token:
-                return jsonify({ 'message': 'Naughty one!'}), 401
-
-            headers = { 'Content-Type': 'application/json', 'x-access-token': token }
-            r = call_requests(app.config['CHECK_ACCESS_URL']+'/login/checkaccess/'+str(access_level), headers)
-
-            if r.status_code != 200:
-                return jsonify({ 'message': 'Ooh you are naughty!'}), 401
-
-            returned_json = r.json()
-
-            if 'public_id' in returned_json:
-                pub_id = returned_json['public_id']
-                return f(pub_id, request, *args, **kwargs)
-
-            return jsonify({ 'message': 'No public_id returned'}), 401
-
-        return decorated
-    return actual_decorator
-'''
-# -----------------------------------------------------------------------------
 
 @bp.route('/address/status', methods=['GET'])
 def system_running():
@@ -52,9 +23,43 @@ def system_running():
 @require_access_level(10, request)
 def get_all_addresses_for_user(public_id, request):
 
-    #addresses = db.session.query().filter(Address.public_id == public_id).all()    
+    addresses = []
+    try:
+        addresses = db.session.query(Address.address_id,
+                                     Address.public_id,
+                                     Address.house_name,
+                                     Address.house_number,
+                                     Address.address_line_1,
+                                     Address.address_line_2,
+                                     Address.address_line_3,
+                                     Address.state_region_county,
+                                     Country.name,
+                                     Country.iso_code,
+                                     Address.post_zip_code).join(Country).filter(Address.public_id == public_id).all()
 
-    return jsonify({ 'message': 'returning all addresses' }), 418
+    except: 
+        jsonify({ 'message': 'oopsy, sorry we couldn\'t complete your request' }), 502
+
+    if len(addresses) == 0:
+        return jsonify({ 'message': 'no addresses found for user' }), 404
+
+    adds = []
+    for address in addresses:
+        address_data = {}
+        address_data['address_id'] = address.address_id
+        address_data['public_id'] = address.public_id
+        address_data['house_name'] = address.house_name
+        address_data['house_number'] = address.house_number
+        address_data['address_line_1'] = address.address_line_1
+        address_data['address_line_2'] = address.address_line_2
+        address_data['address_line_3'] = address.address_line_3
+        address_data['state_region_county'] = address.state_region_county
+        address_data['country'] = address.name
+        address_data['country_code'] = address.iso_code
+        address_data['post_zip_code'] = address.post_zip_code
+        adds.append(address_data)
+
+    return jsonify({ 'addresses': adds }), 200
 
 # -----------------------------------------------------------------------------
 

@@ -1,6 +1,7 @@
 # app/tests/fixtures.py
 from app import db
 from app.models import Country, Address
+import uuid
 
 # countries and addresses for testings
 
@@ -21,4 +22,62 @@ def addCountries():
     return countries
 
 def addAddresses():
-    pass
+
+    # check if countries are present and if not then add them
+    countries = []
+    countries = Country.query.all()
+    if len(countries) == 0:
+        countries = addCountries()
+
+    address1 = Address(address_id = str(uuid.uuid4()),
+                       public_id  = getPublicID(),
+                       house_name = "The Cottage",
+                       house_number = "",
+                       address_line_1 = "Mill Lane",
+                       address_line_2 = "Brixton",
+                       address_line_3 = "",
+                       state_region_county = "London",
+                       country_id = countries[0].id,
+                       post_zip_code = "SW9 4RF")
+
+    address2 = Address(address_id = str(uuid.uuid4()),
+                       public_id  = "376a3fcc-5574-4a3e-91f2-066ca80a9900",
+                       house_name = "",
+                       house_number = "45",
+                       address_line_1 = "High Street",
+                       address_line_2 = "Belper",
+                       address_line_3 = "",
+                       state_region_county = "Derbyshire",
+                       country_id = countries[0].id,
+                       post_zip_code = "DE21 6JH")
+
+    address3 = Address(address_id = str(uuid.uuid4()),
+                       public_id  = getPublicID(),
+                       house_name = "",
+                       house_number = "11A",
+                       address_line_1 = "Queens Road",
+                       address_line_2 = "Outer Bowden",
+                       address_line_3 = "Great Weedon",
+                       state_region_county = "Cornwall",
+                       country_id = countries[0].id,
+                       post_zip_code = "TR4 8DH") 
+
+    address4 = Address(address_id = str(uuid.uuid4()),
+                       public_id  = getPublicID(),
+                       house_name = "Sitío Trinca Ferro",
+                       house_number = "",
+                       address_line_1 = "Morro da Praia Brava",
+                       address_line_2 = "Paraty",
+                       address_line_3 = "",
+                       state_region_county = "Rio de Janeiro",
+                       country_id = countries[2].id,
+                       post_zip_code = "239700-000")
+    
+    db.session.add(address1)
+    db.session.add(address2)
+    db.session.add(address3)
+    db.session.add(address4)
+    addresses = [address1, address2, address3, address4]
+    db.session.commit()
+
+    return addresses

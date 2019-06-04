@@ -54,6 +54,13 @@ class MyTest(FlaskTestCase):
         db.drop_all()
 
 ###############################################################################
+####                        helper functions                               ####
+###############################################################################
+
+#def search(key, value, array_of_dics):
+#    return [element for element in array if element[key] == value]
+
+###############################################################################
 ####                               tests                                   ####
 ###############################################################################
 
@@ -123,10 +130,25 @@ class MyTest(FlaskTestCase):
 # -----------------------------------------------------------------------------
 
     def test_list_of_addresses_ok(self):
+        addresses = addAddresses()
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         response = self.client.get('/address/addresses', headers=headers, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
+        # expect the number of returned addresses to be 3 as we are filtering by public_id
+        results = response.json
+        self.assertEqual(len(results.get('addresses')), 3)
+        # get the retuned address with country name of Brazil and check the returned data matches
+        original_brazil_address = None
+        for addy in addresses:
+            if addy.country_id == 3:
+                original_brazil_address = addy
 
+        returned_brazil_address = None
+        for returned_addy in results['addresses']:
+            if returned_addy.get('country') == "Brazil":
+                returned_brazil_address = returned_addy
+
+        self.assertEqual(original_brazil_address.post_zip_code, returned_brazil_address.get('post_zip_code'))
 
 # -----------------------------------------------------------------------------
 
