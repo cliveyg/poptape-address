@@ -41,8 +41,8 @@ Fields are 'name' and 'iso_code'. Possible return codes: [200, 401, 404, 502]
 Returns a paginated list of all addresses. Possible return codes: [200, 401, 404, 500] 
 ```
 
-#### Note:
-Editing of an already existing address is not allowed at present. This is a business rule rather than for any technical reason.
+#### Notes:
+Editing of an already existing address is not allowed at present. This is a business rule rather than for any technical reason. Microservice uses JWT and relies on an external service to authenticate and authorize. This normally sits on the same internal docker network when this service is dockerized. To use this service it is recommended to use a Python virtual environment and run `pip install -r requirements.txt`. 
 
 #### Rate limiting:
 In addition most routes will return an HTTP status of 429 if too many requests are made in a certain space of time. The time frame is set on a route by route basis.
@@ -67,4 +67,5 @@ All fields apart from iso\_code are optional but will be eventually validated in
 * Dockerize the application and run under wsgi.
 * Need to add per country json schemas.
 * Only 95% test coverage - Most of the missing parts are due to mocking of authenticating decorator.
+* Make code pep8 compliant even though imo it's uglier and harder to read in pep8.
 
