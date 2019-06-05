@@ -5,6 +5,10 @@ from flask import current_app as app
 from app.main import bp
 from app.models import Country, Address
 from app.decorators import require_access_level
+from app.assertions import assert_valid_schema
+from sqlalchemy.exc import SQLAlchemyError
+from jsonschema.exceptions import ValidationError as JsonValidationError
+import uuid
 
 # reject any non-json requests
 @bp.before_request
@@ -72,7 +76,48 @@ def get_all_addresses_for_user(public_id, request):
 @require_access_level(10, request)
 def get_create_address_for_user(public_id, request):
 
-    return jsonify({ 'message': 'dunno what you expected but yer not getting it' }), 417
+    # check input is valid json
+    try:
+        data = request.get_json()
+    except:
+        return jsonify({ 'message': 'Check ya inputs mate. Yer not valid, Jason'}), 400
+
+    # validate input against json schemas
+    try:
+        #TODO: validate on a particular country's address schema based on input iso_code
+        #TODO: get these from redis or similar - only get from disk first time
+        country_data = { 'iso_code': data.get('iso_code') }
+        assert_valid_schema(country_data, 'schemas/countries.json')
+        data.pop('iso_code', None)
+        assert_valid_schema(data, 'schemas/address_default.json')
+    except JsonValidationError as err:
+        return jsonify({ 'message': 'Check ya inputs mate.', 'error': err.message }), 400
+
+    country = Country.query.filter_by(iso_code = country_data.get('iso_code')).first()
+    print(country)
+    address = Address(public_id = public_id,
+                      address_id = str(uuid.uuid4()),
+                      house_name = data.get('house_name'),
+                      house_number = data.get('house_number'),
+                      address_line_1 = data.get('address_line_1'),
+                      address_line_2 = data.get('address_line_2'),
+                      address_line_3 = data.get('address_line_3'),
+                      state_region_county = data.get('state_region_county'),
+                      post_zip_code = data.get('post_zip_code'),
+                      country_id = country.id)
+
+    try:
+        db.session.add(address)
+        db.session.flush()
+        db.session.commit()
+    except (SQLAlchemyError, DBAPIError) as e:
+        db.session.rollback()
+        return jsonify({ 'message': 'oopsy, something went wrong at our end' }), 422
+   
+    message = {}
+    message['message'] = 'address created successfully'
+    message['address_id'] = address.address_id
+    return jsonify( message ), 201
 
 # -----------------------------------------------------------------------------
 # returns an individual address - returns 401 if not authorized on that
@@ -122,10 +167,22 @@ def get_one_address(public_id, request, address_id):
 # deletes an address for the authenticated user
 
 @bp.route('/address/<uuid:address_id>', methods=['DELETE'])
+@limiter.limit("10/hour")
 @require_access_level(10, request)
 def delete_address_for_user(public_id, request, address_id):
 
-    return jsonify({ 'message': 'dunno what you expected but yer not getting it' }), 417
+    address_id = str(address_id)
+    try:
+        result = Address.query.filter(Address.address_id == address_id)\
+                              .filter(Address.public_id == public_id)\
+                              .delete()
+    except SQLAlchemyError as err:
+        return jsonify({ 'message': 'naughty, naughty' }), 401
+
+    if result:
+        return '', 204
+
+    return jsonify({ 'message': 'nope sorry, that\'s not happening today' }), 401
 
 # -----------------------------------------------------------------------------
 # returns a list of all possible countries - names and 3 alpha iso codes
@@ -149,7 +206,8 @@ def list_countries():
 # admin routes
 # -----------------------------------------------------------------------------
 
-
+# -----------------------------------------------------------------------------
+# get all addresses - paginated - limited in config at present
 @bp.route('/address/admin/address', methods=['GET'])
 @limiter.limit("100/hour")
 @require_access_level(5, request)
@@ -216,9 +274,9 @@ def get_all_addresses_admin_method(public_id, request):
 # per minute to this route - restricted to admin users and above
 @bp.route('/address/admin/ratelimited', methods=['GET'])
 @require_access_level(5, request)
-@limiter.limit("2/minute")
+@limiter.limit("0/minute")
 def rate_limted(public_id, request):
-    return jsonify({ 'message': 'first time good' }), 200
+    return jsonify({ 'message': 'should never see this' }), 200
 
 # -----------------------------------------------------------------------------
 # route for anything left over - generates 404

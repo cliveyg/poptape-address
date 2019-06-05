@@ -54,6 +54,6 @@ class Address(db.Model):
         self.country_id = country_id
         self.post_zip_code = post_zip_code
 
-    def __repr__(self):
+    def __repr__(self): # pragma: no cover
         return '<id Address {}>'.format(self.id)
 

@@ -65,7 +65,7 @@ class MyTest(FlaskTestCase):
 
     def test_status_ok(self):
         headers = { 'Content-type': 'application/json' }
-        response = self.client.get('/address/status', headers=headers, follow_redirects=True)
+        response = self.client.get('/address/status', headers=headers)
         self.assertEqual(response.status_code, 200)
 
 # -----------------------------------------------------------------------------
@@ -73,14 +73,14 @@ class MyTest(FlaskTestCase):
     def test_404(self):
         # this behaviour is slightly different to live as we've mocked the 
         headers = { 'Content-type': 'application/json' }
-        response = self.client.get('/address/resourcenotfound', headers=headers, follow_redirects=True)
+        response = self.client.get('/address/resourcenotfound', headers=headers)
         self.assertEqual(response.status_code, 404)
 
 # -----------------------------------------------------------------------------
 
     def test_api_rejects_html_input(self):
         headers = { 'Content-type': 'text/html' }
-        response = self.client.get('/address/status', headers=headers, follow_redirects=True)
+        response = self.client.get('/address/status', headers=headers)
         self.assertEqual(response.status_code, 400)
 
 # -----------------------------------------------------------------------------
@@ -109,7 +109,7 @@ class MyTest(FlaskTestCase):
     def test_return_list_of_countries(self):
         countries = addCountries() 
         headers = { 'Content-type': 'application/json' }
-        response = self.client.get('/address/countries', headers=headers, follow_redirects=True)
+        response = self.client.get('/address/countries', headers=headers)
         results = response.json
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(results.get('countries')), 4)
@@ -118,15 +118,24 @@ class MyTest(FlaskTestCase):
 
     def test_api_rejects_unauthenticated_get(self):
         headers = { 'Content-type': 'application/json' }
-        response = self.client.get('/address', headers=headers, follow_redirects=True)
+        response = self.client.get('/address', headers=headers)
         self.assertEqual(response.status_code, 401)
+
+# -----------------------------------------------------------------------------
+
+    def test_one_address_ok(self):
+        addresses = addAddresses()
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        url = '/address/'+addresses[0].address_id
+        response = self.client.get(url, headers=headers)
+        self.assertEqual(response.status_code, 200)
 
 # -----------------------------------------------------------------------------
 
     def test_list_of_addresses_ok(self):
         addresses = addAddresses()
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
-        response = self.client.get('/address', headers=headers, follow_redirects=True)
+        response = self.client.get('/address', headers=headers)
         self.assertEqual(response.status_code, 200)
         # expect the number of returned addresses to be 3 as we are filtering by public_id
         results = response.json
@@ -149,7 +158,7 @@ class MyTest(FlaskTestCase):
     def test_all_addresses_admin_incl_paging(self):
         addresses = addAddresses()
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
-        response = self.client.get('/address/admin/address', headers=headers, follow_redirects=True)
+        response = self.client.get('/address/admin/address', headers=headers)
         self.assertEqual(response.status_code, 200)
         results = response.json
         # test total number of records and limit per page equals config
@@ -161,10 +170,82 @@ class MyTest(FlaskTestCase):
 
     def test_rate_limiting(self):
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
-        response1 = self.client.get('/address/admin/ratelimited', headers=headers, follow_redirects=True)
-        self.assertEqual(response1.status_code, 200)
-        response2 = self.client.get('/address/admin/ratelimited', headers=headers, follow_redirects=True)
-        self.assertEqual(response2.status_code, 200)
-        #response3 = self.client.get('/address/admin/ratelimited', headers=headers, follow_redirects=True) 
-        #self.assertEqual(response3.status_code, 429)
+        response1 = self.client.get('/address/admin/ratelimited', headers=headers)
+        self.assertEqual(response1.status_code, 429)
+
+# -----------------------------------------------------------------------------
+
+    def test_delete_ok(self):
+        addresses = addAddresses()
+        a_valid_address_id = addresses[0].address_id # valid address for this user
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        # this address is valid for this user so should delete ok. we also have a check in the delete
+        # itself - we delete on address_id AND public_id
+        url = '/address/'+a_valid_address_id
+        response = self.client.delete(url, headers=headers)
+        self.assertEqual(response.status_code, 204) # successful delete with no message
+
+# -----------------------------------------------------------------------------
+
+    def test_delete_fail(self):
+        addresses = addAddresses()
+        invalid_address_id = addresses[1].address_id # invalid address for this user
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        # this address is invalid for this user so should not delete 
+        url = '/address/'+invalid_address_id
+        response = self.client.delete(url, headers=headers)
+        self.assertEqual(response.status_code, 401)
+
+# -----------------------------------------------------------------------------
+
+    def test_create_ok(self):
+        countries = addCountries()
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_json = { 'public_id': getPublicID(),
+                        'house_name': 'The Larches',
+                        'house_number': '12', # house nos are a string because of nos. like 12A
+                        'address_line_1': 'Green Lane',
+                        'address_line_2': 'Little Bowden',
+                        'address_line_3': 'Market Harborough',
+                        'state_region_county': 'Leicestershire',
+                        'iso_code': 'GBR',
+                        'post_zip_code': 'LE13 5WI' }
+
+        response = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 201)
+        rep_body = response.json
+        address_id = rep_body.get('address_id')
+
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        url = '/address/'+address_id
+        check_response = self.client.get(url, headers=headers)
+        check_body = check_response.json
+        self.assertEqual(check_response.status_code, 200)
+        #self.assertEqual(address_id, check_body.get('address_id'))
+        #self.assertEqual(create_json.get('public_id'), check_body.get('public_id'))
+        self.assertEqual(create_json.get('house_name'), check_body.get('house_name'))
+        self.assertEqual(create_json.get('house_number'), check_body.get('house_number'))
+        self.assertEqual(create_json.get('address_line_1'), check_body.get('address_line_1'))
+        self.assertEqual(create_json.get('address_line_2'), check_body.get('address_line_2'))
+        self.assertEqual(create_json.get('address_line_3'), check_body.get('address_line_3'))
+        self.assertEqual(create_json.get('state_region_county'), check_body.get('state_region_county'))
+        self.assertEqual(create_json.get('post_zip_code'), check_body.get('post_zip_code'))
+        self.assertEqual('United Kingdom', check_body.get('country'))
+
+# -----------------------------------------------------------------------------
+
+    def test_fail_with_bad_iso(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_json = { 'public_id': getPublicID(),
+                        'house_name': 'The Larches',
+                        'house_number': '12', # house nos are a string because of nos. like 12A
+                        'address_line_1': 'Green Lane',
+                        'address_line_2': 'Little Bowden',
+                        'address_line_3': 'Market Harborough',
+                        'state_region_county': 'Leicestershire',
+                        'iso_code': 'ZZZ',
+                        'post_zip_code': 'LE13 5WI' }
+
+        response = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 400)
 
