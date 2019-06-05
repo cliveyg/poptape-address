@@ -249,3 +249,21 @@ class MyTest(FlaskTestCase):
         response = self.client.post('/address', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 400)
 
+# -----------------------------------------------------------------------------
+
+    def test_fail_with_extra_field_in_post(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_json = { 'public_id': getPublicID(),
+                        'house_name': 'The Larches',
+                        'house_number': '12', # house nos are a string because of nos. like 12A
+                        'address_line_1': 'Green Lane',
+                        'address_line_2': 'Little Bowden',
+                        'address_line_3': 'Market Harborough',
+                        'address_line_4': 'Extra Address Line',
+                        'state_region_county': 'Leicestershire',
+                        'iso_code': 'GBR',
+                        'post_zip_code': 'LE13 5WI' }
+
+        response = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 400)
+
