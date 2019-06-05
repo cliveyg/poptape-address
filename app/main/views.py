@@ -13,21 +13,24 @@ def only_json():
         abort(400)
 
 # -----------------------------------------------------------------------------
+# helper route - useful for checking status of api in api_server application
 
 @bp.route('/address/status', methods=['GET'])
+@limiter.limit("100/hour")
 def system_running():
     return jsonify({ 'message': 'System running...' }), 200
 
 # -----------------------------------------------------------------------------
+# returns a list of addresses for the authenticated user
 
 @bp.route('/address', methods=['GET'])
+@limiter.limit("20/hour")
 @require_access_level(10, request)
 def get_all_addresses_for_user(public_id, request):
 
     addresses = []
     try:
         addresses = db.session.query(Address.address_id,
-#                                     Address.public_id,
                                      Address.house_name,
                                      Address.house_number,
                                      Address.address_line_1,
@@ -48,7 +51,6 @@ def get_all_addresses_for_user(public_id, request):
     for address in addresses:
         address_data = {}
         address_data['address_id'] = address.address_id
-#        address_data['public_id'] = address.public_id
         address_data['house_name'] = address.house_name
         address_data['house_number'] = address.house_number
         address_data['address_line_1'] = address.address_line_1
@@ -63,8 +65,21 @@ def get_all_addresses_for_user(public_id, request):
     return jsonify({ 'addresses': adds }), 200
 
 # -----------------------------------------------------------------------------
+# creates an address for the authenticated user
+
+@bp.route('/address', methods=['POST'])
+@limiter.limit("10/hour")
+@require_access_level(10, request)
+def get_create_address_for_user(public_id, request):
+
+    return jsonify({ 'message': 'dunno what you expected but yer not getting it' }), 417
+
+# -----------------------------------------------------------------------------
+# returns an individual address - returns 401 if not authorized on that
+# address uuid
 
 @bp.route('/address/<uuid:address_id>', methods=['GET'])
+@limiter.limit("100/hour")
 @require_access_level(10, request)
 def get_one_address(public_id, request, address_id):
 
@@ -73,7 +88,6 @@ def get_one_address(public_id, request, address_id):
     address = None
     try:
         address = db.session.query(Address.house_name,
-#                                   Address.public_id,
                                    Address.house_number,
                                    Address.address_line_1,
                                    Address.address_line_2,
@@ -105,8 +119,19 @@ def get_one_address(public_id, request, address_id):
     return jsonify(address_data), 200
 
 # -----------------------------------------------------------------------------
+# deletes an address for the authenticated user
+
+@bp.route('/address/<uuid:address_id>', methods=['DELETE'])
+@require_access_level(10, request)
+def delete_address_for_user(public_id, request, address_id):
+
+    return jsonify({ 'message': 'dunno what you expected but yer not getting it' }), 417
+
+# -----------------------------------------------------------------------------
+# returns a list of all possible countries - names and 3 alpha iso codes
 
 @bp.route('/address/countries', methods=['GET'])
+@limiter.limit("100/hour")
 def list_countries():
 
     countries = []
@@ -121,8 +146,12 @@ def list_countries():
     return jsonify({ 'countries': countries }), 200
 
 # -----------------------------------------------------------------------------
+# admin routes
+# -----------------------------------------------------------------------------
+
 
 @bp.route('/address/admin/address', methods=['GET'])
+@limiter.limit("100/hour")
 @require_access_level(5, request)
 def get_all_addresses_admin_method(public_id, request):
 
@@ -182,8 +211,17 @@ def get_all_addresses_admin_method(public_id, request):
 
     return jsonify(output), 200
 
+# -----------------------------------------------------------------------------
+# route for testing rate limit works - generates 429 if more than two calls
+# per minute to this route - restricted to admin users and above
+@bp.route('/address/admin/ratelimited', methods=['GET'])
+@require_access_level(5, request)
+@limiter.limit("2/minute")
+def rate_limted(public_id, request):
+    return jsonify({ 'message': 'first time good' }), 200
 
 # -----------------------------------------------------------------------------
+# route for anything left over - generates 404
 
 @bp.route('/address/<everything_left>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def not_found(everything_left):

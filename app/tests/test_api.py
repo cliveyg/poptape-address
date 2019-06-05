@@ -159,3 +159,12 @@ class MyTest(FlaskTestCase):
 
 # -----------------------------------------------------------------------------
 
+    def test_rate_limiting(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        response1 = self.client.get('/address/admin/ratelimited', headers=headers, follow_redirects=True)
+        self.assertEqual(response1.status_code, 200)
+        response2 = self.client.get('/address/admin/ratelimited', headers=headers, follow_redirects=True)
+        self.assertEqual(response2.status_code, 200)
+        #response3 = self.client.get('/address/admin/ratelimited', headers=headers, follow_redirects=True) 
+        #self.assertEqual(response3.status_code, 429)
+

@@ -2,6 +2,7 @@ from flask import Flask
 
 from app.extensions import db, limiter, migrate, flask_uuid
 from app.config import Config
+from app.errors import handle_429_request
 
 def create_app(config_class=Config):
 
@@ -16,6 +17,9 @@ def create_app(config_class=Config):
     
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
+
+    # register custom errors
+    app.register_error_handler(429, handle_429_request)
 
     return app
 

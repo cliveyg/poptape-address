@@ -11,7 +11,7 @@ load_dotenv()
 # this is separate from the views so we can mock it in tests
 # -----------------------------------------------------------------------------
 
-def require_access_level(access_level,request):
+def require_access_level(access_level,request): # pragma: no cover
     def actual_decorator(f):
         @wraps(f)
         def decorated(*args, **kwargs):
