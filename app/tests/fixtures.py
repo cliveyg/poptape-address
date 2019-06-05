@@ -8,6 +8,9 @@ import uuid
 def getPublicID():
     return "fef0b81e-6b39-417c-ab4f-4be1ac4f2c66"
 
+def getAdminID():
+    return "a3893f8b-63e6-4bb7-8147-713738912bd5"
+
 def addCountries():
     country1 = Country(name = "United Kingdom", iso_code = "GBR")
     country2 = Country(name= "Germany", iso_code = "DEU")
@@ -72,11 +75,35 @@ def addAddresses():
                        state_region_county = "Rio de Janeiro",
                        country_id = countries[2].id,
                        post_zip_code = "239700-000")
-    
+
+    address5 = Address(address_id = str(uuid.uuid4()),
+                       public_id  = getAdminID(),
+                       house_name = "A loja",
+                       house_number = "54",
+                       address_line_1 = "Rua Santa Clara",
+                       address_line_2 = "Paraty",
+                       address_line_3 = "",
+                       state_region_county = "Rio de Janeiro",
+                       country_id = countries[2].id,
+                       post_zip_code = "239700-000")
+
+    address6 = Address(address_id = str(uuid.uuid4()),
+                       public_id  = getAdminID(),
+                       house_name = "",
+                       house_number = "765",
+                       address_line_1 = "Clubstraße",
+                       address_line_2 = "Berlin",
+                       address_line_3 = "",
+                       state_region_county = "",
+                       country_id = countries[1].id,
+                       post_zip_code = "2 6 1 3 3")    
+
     db.session.add(address1)
     db.session.add(address2)
     db.session.add(address3)
     db.session.add(address4)
+    db.session.add(address5)
+    db.session.add(address6)
     addresses = [address1, address2, address3, address4]
     db.session.commit()
 

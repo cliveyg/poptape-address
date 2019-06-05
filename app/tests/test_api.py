@@ -1,8 +1,8 @@
+# app/tests/test_api.py
 from mock import patch
 from .fixtures import addCountries, addAddresses, getPublicID
 from functools import wraps
 from flask import jsonify
-from requests.models import Response
 
 # have to mock the require_access_level decorator here before it 
 # gets attached to any classes or functions
@@ -54,13 +54,6 @@ class MyTest(FlaskTestCase):
         db.drop_all()
 
 ###############################################################################
-####                        helper functions                               ####
-###############################################################################
-
-#def search(key, value, array_of_dics):
-#    return [element for element in array if element[key] == value]
-
-###############################################################################
 ####                               tests                                   ####
 ###############################################################################
 
@@ -78,6 +71,7 @@ class MyTest(FlaskTestCase):
 # -----------------------------------------------------------------------------
 
     def test_404(self):
+        # this behaviour is slightly different to live as we've mocked the 
         headers = { 'Content-type': 'application/json' }
         response = self.client.get('/address/resourcenotfound', headers=headers, follow_redirects=True)
         self.assertEqual(response.status_code, 404)
@@ -124,7 +118,7 @@ class MyTest(FlaskTestCase):
 
     def test_api_rejects_unauthenticated_get(self):
         headers = { 'Content-type': 'application/json' }
-        response = self.client.get('/address/addresses', headers=headers, follow_redirects=True)
+        response = self.client.get('/address', headers=headers, follow_redirects=True)
         self.assertEqual(response.status_code, 401)
 
 # -----------------------------------------------------------------------------
@@ -132,7 +126,7 @@ class MyTest(FlaskTestCase):
     def test_list_of_addresses_ok(self):
         addresses = addAddresses()
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
-        response = self.client.get('/address/addresses', headers=headers, follow_redirects=True)
+        response = self.client.get('/address', headers=headers, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         # expect the number of returned addresses to be 3 as we are filtering by public_id
         results = response.json
@@ -149,6 +143,19 @@ class MyTest(FlaskTestCase):
                 returned_brazil_address = returned_addy
 
         self.assertEqual(original_brazil_address.post_zip_code, returned_brazil_address.get('post_zip_code'))
+
+# -----------------------------------------------------------------------------
+
+    def test_all_addresses_admin_incl_paging(self):
+        addresses = addAddresses()
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        response = self.client.get('/address/admin/address', headers=headers, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        results = response.json
+        # test total number of records and limit per page equals config
+        add_limit_per_page = int(TestConfig.ADDRESS_LIMIT_PER_PAGE)
+        self.assertEqual(len(results.get('addresses')), add_limit_per_page)
+        self.assertEqual(results.get('total_records'), 6)
 
 # -----------------------------------------------------------------------------
 

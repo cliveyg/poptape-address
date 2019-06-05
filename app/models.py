@@ -1,5 +1,4 @@
-# addresses/models.py
-
+# app/models.py
 from app import db
 from sqlalchemy.dialects.postgresql import JSON
 import datetime
