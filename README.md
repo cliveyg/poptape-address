@@ -6,19 +6,19 @@ A microservice that stores address data in a postgres database.
 ### API routes
 
 ```
-/address [GET] (Authenticated) - Returns a list of addresses for the authenticated user. 
+**/address [GET] (Authenticated)** - Returns a list of addresses for the authenticated user. 
 Possible return codes: [200, 404, 401, 502]
-/address [POST] (Authenticated) - Returns a UUID of the address if create is successful. 
+**/address [POST] (Authenticated)** - Returns a UUID of the address if create is successful. 
 Possible return codes: [200 400 401 422]
-/address/<uuid> [DELETE] (Authenticated) - Deletes the address resource defined by the UUID in the URL. 
+**/address/<uuid> [DELETE] (Authenticated)** - Deletes the address resource defined by the UUID in the URL. 
 Possible return codes: [204, 401]
-/address/<uuid> [GET] (Authenticated) - Returns the address resource defined by the UUID in the URL. 
+**/address/<uuid> [GET] (Authenticated)** - Returns the address resource defined by the UUID in the URL. 
 Possible return codes: [200, 401, 404]
-/address/status [GET] (Unauthenticated) - Returns JSON message. 
-Possible return codes: [200, 401, 404, 502]
-/address/countries [GET] (Unauthenticated) - Returns the list of ISO-3166 countries. Fields are 'name' and 'iso_code'. 
+**/address/status [GET] (Unauthenticated)** - Returns a JSON message indicating system is running 
 Possible return codes: [200]
-/address/admin/address [GET] (Authenticated) - Returns a paginated list of addresses. 
+**/address/countries [GET] (Unauthenticated)** - Returns the list of ISO-3166 countries. 
+Fields are 'name' and 'iso_code'. Possible return codes: [200, 401, 404, 502]
+**/address/admin/address [GET] (Authenticated)** - Returns a paginated list of addresses. 
 Possible return codes: [200, 401, 404, 500] 
 ```
 
