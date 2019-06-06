@@ -48,7 +48,7 @@ To run this microservice it is recommended to use a Python virtual environment a
 
 Address schema for UK has been added. Validates UK postcode based official UK Gov regex. Also checks that at least one of house\_name or house\_number.
 
-Two scripts have been added to load country data into the live or test dbs. The scripts are `load_countries_into_live.py` and `load_countries_into_test.py`. Both utilise the pytest framework to load data. They can be run using the commands `pytest app/tests/load\_countries\_into\_live.py` or `pytest app/tests/load\_countries\_into\_test.py`
+Two scripts have been added to load country data into the live or test dbs. The scripts are `load_countries_into_live.py` and `load_countries_into_test.py`. Both utilise the pytest framework to load data. They can be run using the commands `pytest app/tests/load_countries_into_live.py` or `pytest app/tests/load_countries_into_test.py`
 
 #### Rate limiting:
 In addition most routes will return an HTTP status of 429 if too many requests are made in a certain space of time. The time frame is set on a route by route basis.
@@ -68,10 +68,11 @@ Tests can be run from app root using: `pytest --cov=app app/tests`
 
 All fields apart from iso\_code are optional but will be eventually validated in more detail by JSON schemas for each individual country. 
 
-#### TODO
+#### TODO:
 * Add more admin only routes for bulk actions etc.
 * Dockerize the application and run under wsgi.
 * Need to add per country json schemas - added UK specific only at present.
+* Possibly add address lookup on per country basis - i.e. for UK use https://api.getAddress.io/find/\<post\_code\>/\<house\_number\>
 * Only 95% test coverage - Most of the missing parts are due to mocking of authenticating decorator.
 * Make code pep8 compliant even though imo it's uglier and harder to read in pep8.
 
