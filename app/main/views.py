@@ -22,6 +22,7 @@ def only_json():
 @bp.route('/address/status', methods=['GET'])
 @limiter.limit("100/hour")
 def system_running():
+    app.logger.info("Praise the FSM! The sauce is ready")
     return jsonify({ 'message': 'System running...' }), 200
 
 # -----------------------------------------------------------------------------
