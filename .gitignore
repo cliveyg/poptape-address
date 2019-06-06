@@ -14,7 +14,7 @@
 # Un-ignore these files - it's bit of a clonky way to do it but it's more secure
 !app/
 !Dockerfile
-!docker-compose
+!docker-compose.yml
 !addresses.py
 !requirements.txt
 !app/__init__.py
@@ -40,4 +40,5 @@
 !app/tests/load_countries_into_live.py
 !app/tests/load_countries_into_test.py
 !app/.env.example
+!.env.example
 !.gitignore
