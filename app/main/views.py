@@ -86,17 +86,14 @@ def get_create_address_for_user(public_id, request):
 
     # validate input against json schemas
     try:
-        #TODO: validate on a particular country's address schema based on input iso_code
-        #TODO: get these from redis or similar - only get from disk first time
         country_data = { 'iso_code': data.get('iso_code') }
-        assert_valid_schema(country_data, 'schemas/countries.json')
-        data.pop('iso_code', None)
-        assert_valid_schema(data, 'schemas/address_default.json')
+        assert_valid_schema(country_data, 'country')
+        assert_valid_schema(data, 'address')
+
     except JsonValidationError as err:
         return jsonify({ 'message': 'Check ya inputs mate.', 'error': err.message }), 400
 
     country = Country.query.filter_by(iso_code = country_data.get('iso_code')).first()
-    print(country)
     address = Address(public_id = public_id,
                       address_id = str(uuid.uuid4()),
                       house_name = data.get('house_name'),

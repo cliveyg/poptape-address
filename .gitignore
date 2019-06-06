@@ -9,6 +9,8 @@
 /app/tests/__pycache__/
 /app/main/__pycache__/
 .coverage
+/app/tests/load_live_db.py
+/app/tests/load_test_db.py
 # Un-ignore these files - it's bit of a clonky way to do it but it's more secure
 !app/
 !Dockerfile
@@ -21,6 +23,7 @@
 !app/extensions.py
 !app/schemas/address_default.json
 !app/schemas/countries.json
+¡app/schemas/address_gbr.json
 !migrations/
 !manage.py
 !README.md
@@ -33,5 +36,8 @@
 !app/tests/fixtures.py
 !app/tests/test_api.py
 !app/tests/__init__.py
+!app/tests/countries_names_and_iso_codes.csv
+!app/tests/load_countries_into_live.py
+!app/tests/load_countries_into_test.py
 !app/.env.example
 !.gitignore

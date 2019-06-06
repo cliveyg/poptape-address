@@ -1,6 +1,6 @@
 # app/tests/test_api.py
 from mock import patch
-from .fixtures import addCountries, addAddresses, getPublicID
+from .fixtures import addTestCountries, addTestAddresses, getPublicID
 from functools import wraps
 from flask import jsonify
 
@@ -107,7 +107,7 @@ class MyTest(FlaskTestCase):
 # -----------------------------------------------------------------------------
 
     def test_return_list_of_countries(self):
-        countries = addCountries() 
+        countries = addTestCountries() 
         headers = { 'Content-type': 'application/json' }
         response = self.client.get('/address/countries', headers=headers)
         results = response.json
@@ -124,7 +124,7 @@ class MyTest(FlaskTestCase):
 # -----------------------------------------------------------------------------
 
     def test_one_address_ok(self):
-        addresses = addAddresses()
+        addresses = addTestAddresses()
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         url = '/address/'+addresses[0].address_id
         response = self.client.get(url, headers=headers)
@@ -133,7 +133,7 @@ class MyTest(FlaskTestCase):
 # -----------------------------------------------------------------------------
 
     def test_list_of_addresses_ok(self):
-        addresses = addAddresses()
+        addresses = addTestAddresses()
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         response = self.client.get('/address', headers=headers)
         self.assertEqual(response.status_code, 200)
@@ -156,7 +156,7 @@ class MyTest(FlaskTestCase):
 # -----------------------------------------------------------------------------
 
     def test_all_addresses_admin_incl_paging(self):
-        addresses = addAddresses()
+        addresses = addTestAddresses()
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         response = self.client.get('/address/admin/address', headers=headers)
         self.assertEqual(response.status_code, 200)
@@ -176,7 +176,7 @@ class MyTest(FlaskTestCase):
 # -----------------------------------------------------------------------------
 
     def test_delete_ok(self):
-        addresses = addAddresses()
+        addresses = addTestAddresses()
         a_valid_address_id = addresses[0].address_id # valid address for this user
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         # this address is valid for this user so should delete ok. we also have a check in the delete
@@ -188,7 +188,7 @@ class MyTest(FlaskTestCase):
 # -----------------------------------------------------------------------------
 
     def test_delete_fail(self):
-        addresses = addAddresses()
+        addresses = addTestAddresses()
         invalid_address_id = addresses[1].address_id # invalid address for this user
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         # this address is invalid for this user so should not delete 
@@ -199,7 +199,7 @@ class MyTest(FlaskTestCase):
 # -----------------------------------------------------------------------------
 
     def test_create_ok(self):
-        countries = addCountries()
+        countries = addTestCountries()
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         create_json = { 'public_id': getPublicID(),
                         'house_name': 'The Larches',
@@ -260,6 +260,64 @@ class MyTest(FlaskTestCase):
                         'address_line_2': 'Little Bowden',
                         'address_line_3': 'Market Harborough',
                         'address_line_4': 'Extra Address Line',
+                        'state_region_county': 'Leicestershire',
+                        'iso_code': 'GBR',
+                        'post_zip_code': 'LE13 5WI' }
+
+        response = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 400)
+
+# -----------------------------------------------------------------------------
+
+    def test_various_postcodes(self):
+        countries = addTestCountries()
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_json = { 'public_id': getPublicID(),
+                        'house_name': 'The Larches',
+                        'house_number': '12', # house nos are a string because of nos. like 12A
+                        'address_line_1': 'Green Lane',
+                        'address_line_2': 'Little Bowden',
+                        'address_line_3': 'Market Harborough',
+                        'state_region_county': 'Leicestershire',
+                        'iso_code': 'GBR',
+                        'post_zip_code': '4LE5464 5£@£WI' }
+
+        response1 = self.client.post('/address', json=create_json, headers=headers)
+        print(response1.json)
+        self.assertEqual(response1.status_code, 400)
+
+        create_json['post_zip_code'] = 'X999342'
+        response2 = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response2.status_code, 400)        
+        
+        create_json['post_zip_code'] = 'DE21 5EA'
+        response3 = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response3.status_code, 201)
+
+        create_json['post_zip_code'] = 'DE215EA'
+        response4 = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response4.status_code, 201)        
+
+        create_json['post_zip_code'] = '1234567890'
+        response5 = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response5.status_code, 400)
+
+        create_json['post_zip_code'] = ''
+        response6 = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response6.status_code, 400)        
+
+        del create_json['post_zip_code']
+        response7 = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response7.status_code, 400)
+
+# -----------------------------------------------------------------------------
+
+    def test_fail_with_missing_house_name_and_number(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_json = { 'public_id': getPublicID(),
+                        'address_line_1': 'Green Lane',
+                        'address_line_2': 'Little Bowden',
+                        'address_line_3': 'Market Harborough',
                         'state_region_county': 'Leicestershire',
                         'iso_code': 'GBR',
                         'post_zip_code': 'LE13 5WI' }
