@@ -42,7 +42,13 @@ Returns a paginated list of all addresses. Possible return codes: [200, 401, 404
 ```
 
 #### Notes:
-Editing of an already existing address is not allowed at present. This is a business rule rather than for any technical reason. Microservice uses JWT and relies on an external service to authenticate and authorize. This normally sits on the same internal docker network when this service is dockerized. To use this service it is recommended to use a Python virtual environment and run `pip install -r requirements.txt`. 
+Editing of an already existing address is not allowed at present. This is a business rule rather than for any technical reason. Microservice uses JWT and relies on an external service to authenticate and authorize. This normally sits on the same internal docker network when this service is dockerized. 
+
+To run this microservice it is recommended to use a Python virtual environment and run `pip install -r requirements.txt`. 
+
+Address schema for UK has been added. Validates UK postcode based official UK Gov regex. Also checks that at least one of house\_name or house\_number.
+
+Two scripts have been added to load country data into the live or test dbs. The scripts are `load_countries_into_live.py` and `load_countries_into_test.py`. Both utilise the pytest framework to load data. They can be run using the commands `pytest app/tests/load\_countries\_into\_live.py` or `pytest app/tests/load\_countries\_into\_test.py`
 
 #### Rate limiting:
 In addition most routes will return an HTTP status of 429 if too many requests are made in a certain space of time. The time frame is set on a route by route basis.
@@ -65,7 +71,7 @@ All fields apart from iso\_code are optional but will be eventually validated in
 #### TODO
 * Add more admin only routes for bulk actions etc.
 * Dockerize the application and run under wsgi.
-* Need to add per country json schemas.
+* Need to add per country json schemas - added UK specific only at present.
 * Only 95% test coverage - Most of the missing parts are due to mocking of authenticating decorator.
 * Make code pep8 compliant even though imo it's uglier and harder to read in pep8.
 

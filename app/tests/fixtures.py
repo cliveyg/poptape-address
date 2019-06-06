@@ -1,17 +1,31 @@
 # app/tests/fixtures.py
+
 from app import db
 from app.models import Country, Address
 import uuid
+import os.path
+import os
+import csv
+from sqlalchemy.exc import SQLAlchemyError
+
+from dotenv import load_dotenv
+load_dotenv()
 
 # countries and addresses for testings
+
+# -----------------------------------------------------------------------------
 
 def getPublicID():
     return "fef0b81e-6b39-417c-ab4f-4be1ac4f2c66"
 
+# -----------------------------------------------------------------------------
+
 def getAdminID():
     return "a3893f8b-63e6-4bb7-8147-713738912bd5"
 
-def addCountries():
+# -----------------------------------------------------------------------------
+
+def addTestCountries():
     country1 = Country(name = "United Kingdom", iso_code = "GBR")
     country2 = Country(name= "Germany", iso_code = "DEU")
     country3 = Country(name= "Brazil", iso_code = "BRA")
@@ -24,13 +38,15 @@ def addCountries():
     db.session.commit()
     return countries
 
-def addAddresses():
+# -----------------------------------------------------------------------------
+
+def addTestAddresses():
 
     # check if countries are present and if not then add them
     countries = []
     countries = Country.query.all()
     if len(countries) == 0:
-        countries = addCountries()
+        countries = addTestCountries()
 
     address1 = Address(address_id = str(uuid.uuid4()),
                        public_id  = getPublicID(),
@@ -108,3 +124,32 @@ def addAddresses():
     db.session.commit()
 
     return addresses
+
+# -----------------------------------------------------------------------------
+
+def addAllCountries(): # pragma: no cover
+    
+    # load csv file
+    countries_file = os.getenv('COUNTRIES_CSV')
+    filepath = os.path.join(os.path.dirname(__file__), countries_file)
+    errors = []
+
+    with open(filepath) as csv_file:
+
+        csv_reader = csv.reader(csv_file, delimiter=',') 
+        for row in csv_reader:
+
+            country = Country(name = row[0], iso_code = row[1])
+            try:
+                db.session.add(country)
+                db.session.flush()
+                db.session.commit()
+            except (SQLAlchemyError, DBAPIError) as err:
+                errors.append(err)
+                db.session.rollback() 
+
+    if len(errors) > 0:
+        print("Errors generated when loading database!")
+        return False
+    return True
+
