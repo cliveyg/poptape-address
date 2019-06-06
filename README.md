@@ -72,7 +72,7 @@ All fields apart from iso\_code are optional but will be eventually validated in
 * Add more admin only routes for bulk actions etc.
 * Dockerize the application and run under wsgi.
 * Need to add per country json schemas - added UK specific only at present.
-* Possibly add address lookup on per country basis - i.e. for UK use https://api.getAddress.io/find/\<post\_code\>/\<house\_number\>
+* Possibly add address lookup on per country basis - i.e. for UK use https://api.getAddress.io
 * Only 95% test coverage - Most of the missing parts are due to mocking of authenticating decorator.
 * Make code pep8 compliant even though imo it's uglier and harder to read in pep8.
 
