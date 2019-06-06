@@ -68,6 +68,9 @@ Tests can be run from app root using: `pytest --cov=app app/tests`
 
 All fields apart from iso\_code are optional but will be eventually validated in more detail by JSON schemas for each individual country. 
 
+#### Docker:
+This app can now be run in Docker using the included docker-compose.yml and Dockerfile. The database and roles still need to be created manually after successful deployment of the app in Docker. It's on the TODO list to automate these parts :-)
+
 #### TODO:
 * Add more admin only routes for bulk actions etc.
 * Dockerize the application and run under wsgi.
@@ -75,4 +78,4 @@ All fields apart from iso\_code are optional but will be eventually validated in
 * Possibly add address lookup on per country basis - i.e. for UK use https://api.getAddress.io
 * Only 95% test coverage - Most of the missing parts are due to mocking of authenticating decorator.
 * Make code pep8 compliant even though imo pep8 code is uglier and harder to read ;-)
-
+* Automate docker database creation and population.
