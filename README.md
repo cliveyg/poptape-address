@@ -1,7 +1,7 @@
 # poptape-address
-Address microservice in Python Flask
+Address microservice written in Python Flask
 
-A microservice that stores address data in a postgres database.
+A microservice that validates and stores address data in a Postgres database.
 
 ### API routes
 
@@ -46,7 +46,7 @@ Editing of an already existing address is not allowed at present. This is a busi
 
 To run this microservice it is recommended to use a Python virtual environment and run `pip install -r requirements.txt`. 
 
-Address schema for UK has been added. Validates UK postcode based official UK Gov regex. Also checks that at least one of house\_name or house\_number.
+Address schema for UK has been added. Validates UK postcode based official UK Gov regex. Also checks that at least one of house\_name or house\_number being present.
 
 Two scripts have been added to load country data into the live or test dbs. The scripts are `load_countries_into_live.py` and `load_countries_into_test.py`. Both utilise the pytest framework to load data. They can be run using the commands `pytest app/tests/load_countries_into_live.py` or `pytest app/tests/load_countries_into_test.py`
 
@@ -74,5 +74,5 @@ All fields apart from iso\_code are optional but will be eventually validated in
 * Need to add per country json schemas - added UK specific only at present.
 * Possibly add address lookup on per country basis - i.e. for UK use https://api.getAddress.io
 * Only 95% test coverage - Most of the missing parts are due to mocking of authenticating decorator.
-* Make code pep8 compliant even though imo it's uglier and harder to read in pep8.
+* Make code pep8 compliant even though imo it's uglier and harder to read in pep8 ;)
 
