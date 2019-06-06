@@ -19,7 +19,7 @@ class Country(db.Model):
         self.name = name
         self.iso_code = iso_code
 
-    def __repr__(self):
+    def __repr__(self): # pragma: no cover 
         return '<id Country {}>'.format(self.id)
     
 

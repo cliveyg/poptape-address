@@ -14,9 +14,6 @@ def assert_valid_schema(data, schema_type):
 
     if schema_type == 'address':
         country_code = data.pop('iso_code', None)
-        if not country_code:
-            raise JsonValidationError
-            return
 
         if country_code == 'GBR':
             schema = _load_json_schema('schemas/address_gbr.json')

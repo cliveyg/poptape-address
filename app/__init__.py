@@ -4,6 +4,9 @@ from app.extensions import db, limiter, migrate, flask_uuid
 from app.config import Config
 from app.errors import handle_429_request
 
+import logging
+from logging.handlers import RotatingFileHandler
+
 def create_app(config_class=Config):
 
     app = Flask(__name__)
@@ -20,6 +23,26 @@ def create_app(config_class=Config):
 
     # register custom errors
     app.register_error_handler(429, handle_429_request)
+
+
+    # logging stuff
+    formatter = logging.Formatter("[%(asctime)s] [%(pathname)s:%(lineno)d] %(levelname)s - %(message)s")
+    handler = RotatingFileHandler(app.config['LOG_FILENAME'], maxBytes=10000000, backupCount=5)
+    log_level = app.config['LOG_LEVEL']
+
+    if log_level == 'DEBUG': # pragma: no cover
+        app.logger.setLevel(logging.DEBUG) # pragma: no cover
+    elif log_level == 'INFO': # pragma: no cover
+        app.logger.setLevel(logging.INFO) # pragma: no cover
+    elif log_level == 'WARNING': # pragma: no cover
+        app.logger.setLevel(logging.WARNING) # pragma: no cover
+    elif log_level == 'ERROR': # pragma: no cover
+        app.logger.setLevel(logging.ERROR) # pragma: no cover
+    else: # pragma: no cover
+        app.logger.setLevel(logging.CRITICAL) # pragma: no cover
+
+    handler.setFormatter(formatter)
+    app.logger.addHandler(handler)
 
     return app
 
