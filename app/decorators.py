@@ -1,9 +1,10 @@
 # app/decorators.py
-import app.services
+from app.services import call_requests
 from functools import wraps
 import os
 from dotenv import load_dotenv
 from flask import jsonify
+from flask import current_app as appy
 
 load_dotenv()
 
@@ -22,7 +23,10 @@ def require_access_level(access_level,request): # pragma: no cover
                 return jsonify({ 'message': 'Naughty one!'}), 401
 
             headers = { 'Content-Type': 'application/json', 'x-access-token': token }
-            r = app.services.call_requests(os.getenv('CHECK_ACCESS_URL')+'/login/checkaccess/'+str(access_level), headers)
+            url = os.getenv('CHECK_ACCESS_URL')+'/login/checkaccess/'+str(access_level)
+            appy.logger.info("URL IS [%s]", url)
+            r = call_requests(url, headers)
+            appy.logger.info("RET STAT CODE IS [%s]", r.status_code)
 
             if r.status_code != 200:
                 return jsonify({ 'message': 'Ooh you are naughty!'}), 401
