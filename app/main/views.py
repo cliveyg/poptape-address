@@ -1,6 +1,6 @@
 # app/main/views.py
 from app import limiter, db, flask_uuid
-from flask import jsonify, request, abort, url_for
+from flask import jsonify, request, abort
 from flask import current_app as app
 from app.main import bp
 from app.models import Country, Address

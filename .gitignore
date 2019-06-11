@@ -24,8 +24,6 @@
 !app/schemas/address_default.json
 !app/schemas/countries.json
 ¡app/schemas/address_gbr.json
-!migrations/
-!manage.py
 !README.md
 !app/models.py
 !app/errors.py

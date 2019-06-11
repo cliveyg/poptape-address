@@ -2,7 +2,7 @@ from flask import Flask
 
 from app.extensions import db, limiter, migrate, flask_uuid
 from app.config import Config
-from app.errors import handle_429_request
+from app.errors import handle_429_request, handle_wrong_method, handle_not_found
 
 import logging
 from logging.handlers import RotatingFileHandler
@@ -23,7 +23,8 @@ def create_app(config_class=Config):
 
     # register custom errors
     app.register_error_handler(429, handle_429_request)
-
+    app.register_error_handler(405, handle_wrong_method)
+    app.register_error_handler(404, handle_not_found)
 
     # logging stuff
     formatter = logging.Formatter("[%(asctime)s] [%(pathname)s:%(lineno)d] %(levelname)s - %(message)s")
