@@ -38,5 +38,4 @@
 !app/tests/load_countries_into_live.py
 !app/tests/load_countries_into_test.py
 !app/.env.example
-!.env.example
 !.gitignore
