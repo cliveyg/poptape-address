@@ -3,6 +3,7 @@
 /vadd/*
 /addresses/log
 /app/.env
+.env
 /.pytest_cache/
 /__pycache__/
 /app/__pycache__/
@@ -13,9 +14,11 @@
 /app/tests/load_test_db.py
 # Un-ignore these files - it's bit of a clonky way to do it but it's more secure
 !app/
+!pg_schemas/
 !Dockerfile
 !docker-compose.yml
 !addresses.py
+!manage.py
 !requirements.txt
 !app/__init__.py
 !app/config.py
@@ -38,5 +41,4 @@
 !app/tests/load_countries_into_live.py
 !app/tests/load_countries_into_test.py
 !app/.env.example
-!.env.example
 !.gitignore

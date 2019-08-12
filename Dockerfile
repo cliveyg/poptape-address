@@ -1,14 +1,14 @@
-FROM python:3.7-alpine 
+FROM python:3.7-alpine
 # as base                                                                                                
-                                                                                                                              
-                                                                                                                              
+
 RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev 
 # add bash etc as alpine version doesn't have these
-RUN apk add linux-headers 
+RUN apk add linux-headers
 RUN apk add --no-cache bash gawk sed grep bc coreutils
 RUN apk --no-cache add libpq
 
 COPY addresses.py /addresses/
+COPY manage.py /addesses/
 COPY requirements.txt /addresses/
 COPY app /addresses/app
 WORKDIR /addresses
@@ -19,7 +19,7 @@ RUN mkdir -p /addresses/log
 RUN pip install --upgrade pip
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
-# Make port 8001 and 6033 available to the world outside this container
+# Make port 8011 available to the world outside this container
 EXPOSE 8011
 
 # if -u flag in CMD below doesn't work 

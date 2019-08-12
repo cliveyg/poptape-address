@@ -13,6 +13,7 @@ def create_app(config_class=Config):
     # set app configs
     app.config.from_object(config_class)
 
+    # register extensions
     db.init_app(app)
     limiter.init_app(app)
     migrate.init_app(app)

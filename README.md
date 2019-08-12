@@ -3,6 +3,9 @@ Address microservice written in Python Flask
 
 This microservice validates and stores address data in a Postgres database.
 
+Please see [this gist](https://gist.github.com/cliveyg/cf77c295e18156ba74cda46949231d69) to see how this microserv
+cie works as part of the auction system software.
+
 ### API routes
 
 ```
