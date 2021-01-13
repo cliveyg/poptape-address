@@ -23,10 +23,10 @@ def require_access_level(access_level,request): # pragma: no cover
                 return jsonify({ 'message': 'Naughty one!'}), 401
 
             headers = { 'Content-Type': 'application/json', 'x-access-token': token }
-            url = os.getenv('CHECK_ACCESS_URL')+'/login/checkaccess/'+str(access_level)
-            appy.logger.info("URL IS [%s]", url)
+            url = os.getenv('CHECK_ACCESS_URL')+'/authy/checkaccess/'+str(access_level)
+            #appy.logger.info("URL IS [%s]", url)
             r = call_requests(url, headers)
-            appy.logger.info("RET STAT CODE IS [%s]", r.status_code)
+            #appy.logger.info("RET STAT CODE IS [%s]", r.status_code)
 
             if r.status_code != 200:
                 return jsonify({ 'message': 'Ooh you are naughty!'}), 401
