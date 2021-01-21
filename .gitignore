@@ -16,6 +16,7 @@
 !Dockerfile
 !docker-compose.yml
 !addresses.py
+!manage.py
 !requirements.txt
 !app/__init__.py
 !app/config.py

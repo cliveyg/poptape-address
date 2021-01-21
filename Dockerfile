@@ -8,6 +8,7 @@ RUN apk add --no-cache bash gawk sed grep bc coreutils
 RUN apk --no-cache add libpq
 
 COPY addresses.py /addresses/
+COPY manage.py /addesses/
 COPY requirements.txt /addresses/
 COPY app /addresses/app
 WORKDIR /addresses
