@@ -3,6 +3,7 @@
 /vadd/*
 /addresses/log
 /app/.env
+.env
 /.pytest_cache/
 /__pycache__/
 /app/__pycache__/
