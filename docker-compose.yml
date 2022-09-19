@@ -12,8 +12,7 @@ services:
       - "1238:8011"
     restart: always
     volumes:
-#      - /var/log:/addresses/log
-      - /Users/cliveglew/dev/logs
+      - ${LOGFILE}
     logging:
       driver: "json-file"
       options:
