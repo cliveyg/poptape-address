@@ -7,9 +7,9 @@ on:
   schedule:
   - cron: '0 10 * * 1' # run "At 10:00 on Monday"
 
-  jobs:
+jobs:
   # Run code tests before building the image, to ensure it is good to go
-  build:
+  unit-tests:
     name: Run code tests
     runs-on: ubuntu-latest
     strategy:
