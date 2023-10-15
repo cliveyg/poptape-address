@@ -1,0 +1,8 @@
+name: Run unit tests
+on: 
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+  - cron: '0 10 * * 1' # run "At 10:00 on Monday"
