@@ -4,9 +4,9 @@ from .fixtures import addTestCountries, addTestAddresses, getPublicID
 from functools import wraps
 from flask import jsonify
 
-# have to mock the require_access_level decorator here before it 
+# have to mock the require_access_level decorator here before it
 # gets attached to any classes or functions
-def mock_dec(access_level,request):
+def mock_dec(access_level, request):
     def actual_decorator(f):
         @wraps(f)
         def decorated(*args, **kwargs):
@@ -14,7 +14,7 @@ def mock_dec(access_level,request):
             token = request.headers.get('x-access-token')
 
             if not token:
-                return jsonify({ 'message': 'Naughty one!'}), 401
+                return jsonify({'message': 'Naughty one!'}), 401
             pub_id = getPublicID()
             return f(pub_id, request, *args, **kwargs)
 
@@ -27,7 +27,7 @@ from app import create_app, db
 from app.models import Country, Address
 from app.config import TestConfig
 
-from flask import current_app 
+from flask import current_app
 from flask_testing import TestCase as FlaskTestCase
 
 from sqlalchemy.exc import DataError
@@ -58,7 +58,7 @@ class MyTest(FlaskTestCase):
 ###############################################################################
 
     def test_for_testdb(self):
-        self.assertTrue('poptape_address_test' in 
+        self.assertTrue('poptape_address_test' in
                         self.app.config['SQLALCHEMY_DATABASE_URI'])
 
 # -----------------------------------------------------------------------------
@@ -107,7 +107,7 @@ class MyTest(FlaskTestCase):
 # -----------------------------------------------------------------------------
 
     def test_return_list_of_countries(self):
-        countries = addTestCountries() 
+        countries = addTestCountries()
         headers = { 'Content-type': 'application/json' }
         response = self.client.get('/address/countries', headers=headers)
         results = response.json
@@ -288,15 +288,15 @@ class MyTest(FlaskTestCase):
 
         create_json['post_zip_code'] = 'X999342'
         response2 = self.client.post('/address', json=create_json, headers=headers)
-        self.assertEqual(response2.status_code, 400)        
-        
+        self.assertEqual(response2.status_code, 400)
+
         create_json['post_zip_code'] = 'DE21 5EA'
         response3 = self.client.post('/address', json=create_json, headers=headers)
         self.assertEqual(response3.status_code, 201)
 
         create_json['post_zip_code'] = 'DE215EA'
         response4 = self.client.post('/address', json=create_json, headers=headers)
-        self.assertEqual(response4.status_code, 201)        
+        self.assertEqual(response4.status_code, 201)
 
         create_json['post_zip_code'] = '1234567890'
         response5 = self.client.post('/address', json=create_json, headers=headers)
@@ -304,7 +304,7 @@ class MyTest(FlaskTestCase):
 
         create_json['post_zip_code'] = ''
         response6 = self.client.post('/address', json=create_json, headers=headers)
-        self.assertEqual(response6.status_code, 400)        
+        self.assertEqual(response6.status_code, 400)
 
         del create_json['post_zip_code']
         response7 = self.client.post('/address', json=create_json, headers=headers)
