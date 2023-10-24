@@ -38,7 +38,7 @@ jobs:
 
       - name: Install postgres client
         run: |
-          sudo apt-get update && apt-get install --yes --no-install-recommends postgresql-client
+          sudo apt-get update && sudo apt-get install --yes --no-install-recommends postgresql-client
 
       - uses: actions/checkout@v4
       - name: Setting up Python ${{ matrix.python-version }}
