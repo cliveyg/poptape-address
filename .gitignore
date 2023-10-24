@@ -14,6 +14,7 @@
 /app/tests/load_test_db.py
 # Un-ignore these files - it's bit of a clonky way to do it but it's more secure
 !app/
+!pg_schemas/
 !Dockerfile
 !docker-compose.yml
 !addresses.py
