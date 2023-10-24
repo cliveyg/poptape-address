@@ -3,6 +3,7 @@
 /vadd/*
 /addresses/log
 /app/.env
+.env
 /.pytest_cache/
 /__pycache__/
 /app/__pycache__/
@@ -17,6 +18,7 @@
 !Dockerfile
 !docker-compose.yml
 !addresses.py
+!manage.py
 !requirements.txt
 !app/__init__.py
 !app/config.py
