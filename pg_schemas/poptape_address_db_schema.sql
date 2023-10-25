@@ -21,7 +21,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: address; Type: TABLE; Schema: public; Owner: poptape_address
+-- Name: address; Type: TABLE; Schema: public; Owner: poptape_address_test
 --
 
 CREATE TABLE public.address (
@@ -40,10 +40,10 @@ CREATE TABLE public.address (
 );
 
 
-ALTER TABLE public.address OWNER TO poptape_address;
+ALTER TABLE public.address OWNER TO poptape_address_test;
 
 --
--- Name: address_id_seq; Type: SEQUENCE; Schema: public; Owner: poptape_address
+-- Name: address_id_seq; Type: SEQUENCE; Schema: public; Owner: poptape_address_test
 --
 
 CREATE SEQUENCE public.address_id_seq
@@ -55,17 +55,17 @@ CREATE SEQUENCE public.address_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.address_id_seq OWNER TO poptape_address;
+ALTER TABLE public.address_id_seq OWNER TO poptape_address_test;
 
 --
--- Name: address_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poptape_address
+-- Name: address_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poptape_address_test
 --
 
 ALTER SEQUENCE public.address_id_seq OWNED BY public.address.id;
 
 
 --
--- Name: country; Type: TABLE; Schema: public; Owner: poptape_address
+-- Name: country; Type: TABLE; Schema: public; Owner: poptape_address_test
 --
 
 CREATE TABLE public.country (
@@ -75,10 +75,10 @@ CREATE TABLE public.country (
 );
 
 
-ALTER TABLE public.country OWNER TO poptape_address;
+ALTER TABLE public.country OWNER TO poptape_address_test;
 
 --
--- Name: country_id_seq; Type: SEQUENCE; Schema: public; Owner: poptape_address
+-- Name: country_id_seq; Type: SEQUENCE; Schema: public; Owner: poptape_address_test
 --
 
 CREATE SEQUENCE public.country_id_seq
@@ -90,31 +90,31 @@ CREATE SEQUENCE public.country_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.country_id_seq OWNER TO poptape_address;
+ALTER TABLE public.country_id_seq OWNER TO poptape_address_test;
 
 --
--- Name: country_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poptape_address
+-- Name: country_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: poptape_address_test
 --
 
 ALTER SEQUENCE public.country_id_seq OWNED BY public.country.id;
 
 
 --
--- Name: address id; Type: DEFAULT; Schema: public; Owner: poptape_address
+-- Name: address id; Type: DEFAULT; Schema: public; Owner: poptape_address_test
 --
 
 ALTER TABLE ONLY public.address ALTER COLUMN id SET DEFAULT nextval('public.address_id_seq'::regclass);
 
 
 --
--- Name: country id; Type: DEFAULT; Schema: public; Owner: poptape_address
+-- Name: country id; Type: DEFAULT; Schema: public; Owner: poptape_address_test
 --
 
 ALTER TABLE ONLY public.country ALTER COLUMN id SET DEFAULT nextval('public.country_id_seq'::regclass);
 
 
 --
--- Name: address address_address_id_key; Type: CONSTRAINT; Schema: public; Owner: poptape_address
+-- Name: address address_address_id_key; Type: CONSTRAINT; Schema: public; Owner: poptape_address_test
 --
 
 ALTER TABLE ONLY public.address
@@ -122,7 +122,7 @@ ALTER TABLE ONLY public.address
 
 
 --
--- Name: address address_pkey; Type: CONSTRAINT; Schema: public; Owner: poptape_address
+-- Name: address address_pkey; Type: CONSTRAINT; Schema: public; Owner: poptape_address_test
 --
 
 ALTER TABLE ONLY public.address
@@ -130,7 +130,7 @@ ALTER TABLE ONLY public.address
 
 
 --
--- Name: country country_iso_code_key; Type: CONSTRAINT; Schema: public; Owner: poptape_address
+-- Name: country country_iso_code_key; Type: CONSTRAINT; Schema: public; Owner: poptape_address_test
 --
 
 ALTER TABLE ONLY public.country
@@ -138,7 +138,7 @@ ALTER TABLE ONLY public.country
 
 
 --
--- Name: country country_name_key; Type: CONSTRAINT; Schema: public; Owner: poptape_address
+-- Name: country country_name_key; Type: CONSTRAINT; Schema: public; Owner: poptape_address_test
 --
 
 ALTER TABLE ONLY public.country
@@ -146,7 +146,7 @@ ALTER TABLE ONLY public.country
 
 
 --
--- Name: country country_pkey; Type: CONSTRAINT; Schema: public; Owner: poptape_address
+-- Name: country country_pkey; Type: CONSTRAINT; Schema: public; Owner: poptape_address_test
 --
 
 ALTER TABLE ONLY public.country
@@ -154,7 +154,7 @@ ALTER TABLE ONLY public.country
 
 
 --
--- Name: address address_country_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: poptape_address
+-- Name: address address_country_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: poptape_address_test
 --
 
 ALTER TABLE ONLY public.address

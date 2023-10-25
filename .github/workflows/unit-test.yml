@@ -24,7 +24,7 @@ jobs:
         env:
           POSTGRES_DB: poptape_address_test
           POSTGRES_PASSWORD: ${{ secrets.TESTDB_PASSWORD }}
-          POSTGRES_USER: testdb_user
+          POSTGRES_USER: poptape_address_test
         ports:
           # maps tcp port 5432 on service container to the host
           - 5432:5432
@@ -55,3 +55,8 @@ jobs:
       - name: Create .env file from github secrets
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
+
+      - name: Create DB tables
+        run: |
+          psql -h localhost -U poptape_address_test password=${{ secrets.TESTDB_PASSWORD }} -f pg_schemas/poptape_address_db_schema.sql
+          psql -h localhost -U poptape_address_test password=${{ secrets.TESTDB_PASSWORD }} -c '\dt'         
