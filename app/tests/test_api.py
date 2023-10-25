@@ -92,3 +92,40 @@ class MyTest(FlaskTestCase):
         db.session.commit()
         self.assertEqual(country.id, 1)
 
+    # -----------------------------------------------------------------------------
+
+    def test_country_model_fails_iso_length(self):
+        country = Country(name = "United Kingdom",
+                          iso_code = "TOOLONG")
+        try:
+            db.session.add(country)
+            db.session.commit()
+        except DataError as error:
+            db.session.rollback()
+            self.assertTrue('value too long' in str(error))
+
+    # -----------------------------------------------------------------------------
+
+    def test_return_list_of_countries(self):
+        countries = addTestCountries()
+        headers = { 'Content-type': 'application/json' }
+        response = self.client.get('/address/countries', headers=headers)
+        results = response.json
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(results.get('countries')), 4)
+
+    # -----------------------------------------------------------------------------
+
+    def test_api_rejects_unauthenticated_get(self):
+        headers = { 'Content-type': 'application/json' }
+        response = self.client.get('/address', headers=headers)
+        self.assertEqual(response.status_code, 401)
+
+    # -----------------------------------------------------------------------------
+
+    def test_one_address_ok(self):
+        addresses = addTestAddresses()
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        url = '/address/'+addresses[0].address_id
+        response = self.client.get(url, headers=headers)
+        self.assertEqual(response.status_code, 200)
