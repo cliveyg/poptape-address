@@ -61,7 +61,7 @@ jobs:
           pwd
           ls -altr
           psql --version
-        #  PGPASSWORD=${{ secrets.TESTDB_PASSWORD }} psql -U poptape_address_test -p 5432 -c "\l"
+          PGPASSWORD=${{ secrets.TESTDB_PASSWORD }} psql -U poptape_address_test -p 5432
         #  PGPASSWORD=${{ secrets.TESTDB_PASSWORD }} psql -U poptape_address_test -h postgres -d poptape_address_test < pg_schemas/poptape_address_db_schema.sql
         # psql -U poptape_address_test -p ${{ secrets.TESTDB_PASSWORD }} -d poptape_address_test -a -f pg_schemas/poptape_address_db_schema.sql
         # psql -U poptape_address_test -p ${{ secrets.TESTDB_PASSWORD }} -c "\c poptape_address_test"
