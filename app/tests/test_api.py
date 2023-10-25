@@ -231,3 +231,131 @@ class MyTest(FlaskTestCase):
         self.assertEqual(create_json.get('state_region_county'), check_body.get('state_region_county'))
         self.assertEqual(create_json.get('post_zip_code'), check_body.get('post_zip_code'))
         self.assertEqual('United Kingdom', check_body.get('country'))
+
+    # -----------------------------------------------------------------------------
+
+    def test_fail_with_bad_iso(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_json = { 'public_id': getPublicID(),
+                        'house_name': 'The Larches',
+                        'house_number': '12', # house nos are a string because of nos. like 12A
+                        'address_line_1': 'Green Lane',
+                        'address_line_2': 'Little Bowden',
+                        'address_line_3': 'Market Harborough',
+                        'state_region_county': 'Leicestershire',
+                        'iso_code': 'ZZZ',
+                        'post_zip_code': 'LE13 5WI' }
+
+        response = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 400)
+
+    # -----------------------------------------------------------------------------
+
+    def test_fail_with_extra_field_in_post(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_json = { 'public_id': getPublicID(),
+                        'house_name': 'The Larches',
+                        'house_number': '12', # house nos are a string because of nos. like 12A
+                        'address_line_1': 'Green Lane',
+                        'address_line_2': 'Little Bowden',
+                        'address_line_3': 'Market Harborough',
+                        'address_line_4': 'Extra Address Line',
+                        'state_region_county': 'Leicestershire',
+                        'iso_code': 'GBR',
+                        'post_zip_code': 'LE13 5WI' }
+
+        response = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 400)
+
+    # -----------------------------------------------------------------------------
+
+    def test_various_postcodes(self):
+        countries = addTestCountries()
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_json = { 'public_id': getPublicID(),
+                        'house_name': 'The Larches',
+                        'house_number': '12', # house nos are a string because of nos. like 12A
+                        'address_line_1': 'Green Lane',
+                        'address_line_2': 'Little Bowden',
+                        'address_line_3': 'Market Harborough',
+                        'state_region_county': 'Leicestershire',
+                        'iso_code': 'GBR',
+                        'post_zip_code': '4LE5464 5£@£WI' }
+
+        response1 = self.client.post('/address', json=create_json, headers=headers)
+        print(response1.json)
+        self.assertEqual(response1.status_code, 400)
+
+        create_json['post_zip_code'] = 'X999342'
+        response2 = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response2.status_code, 400)
+
+        create_json['post_zip_code'] = 'DE21 5EA'
+        response3 = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response3.status_code, 201)
+
+        create_json['post_zip_code'] = 'DE215EA'
+        response4 = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response4.status_code, 201)
+
+        create_json['post_zip_code'] = '1234567890'
+        response5 = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response5.status_code, 400)
+
+        create_json['post_zip_code'] = ''
+        response6 = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response6.status_code, 400)
+
+        del create_json['post_zip_code']
+        response7 = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response7.status_code, 400)
+
+    # -----------------------------------------------------------------------------
+
+    def test_fail_with_missing_house_name_and_number(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_json = { 'public_id': getPublicID(),
+                        'address_line_1': 'Green Lane',
+                        'address_line_2': 'Little Bowden',
+                        'address_line_3': 'Market Harborough',
+                        'state_region_county': 'Leicestershire',
+                        'iso_code': 'GBR',
+                        'post_zip_code': 'LE13 5WI' }
+
+        response = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 400)
+
+    # -----------------------------------------------------------------------------
+
+    def test_non_uk_json_schema(self):
+        countries = addTestCountries()
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_json = { 'public_id': getPublicID(),
+                        'house_name': 'The Larches',
+                        'house_number': '12', # house nos are a string because of nos. like 12A
+                        'address_line_1': 'Green Lane',
+                        'address_line_2': 'Little Bowden',
+                        'address_line_3': 'Market Harborough',
+                        'state_region_county': 'Leicestershire',
+                        'iso_code': 'FRA',
+                        'post_zip_code': 'LE13 5WI' }
+
+        response = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 201)
+
+    # -----------------------------------------------------------------------------
+
+    def test_no_iso_code(self):
+        countries = addTestCountries()
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_json = { 'public_id': getPublicID(),
+                        'house_name': 'The Larches',
+                        'house_number': '12', # house nos are a string because of nos. like 12A
+                        'address_line_1': 'Green Lane',
+                        'address_line_2': 'Little Bowden',
+                        'address_line_3': 'Market Harborough',
+                        'state_region_county': 'Leicestershire',
+                        'post_zip_code': 'LE13 5WI' }
+
+        response = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 400)
