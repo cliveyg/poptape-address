@@ -60,10 +60,12 @@ jobs:
         run: |
           pwd
           ls -altr
+          psql -h localhost -U poptape_address_test password=${{ secrets.TESTDB_PASSWORD }} -f pg_schemas/poptape_address_db_schema.sql
+          psql -h localhost -U poptape_address_test password=${{ secrets.TESTDB_PASSWORD }} -c '\dt'
         #  psql --version
         #  psql -h localhost -U poptape_address_test password=${{ secrets.TESTDB_PASSWORD }} -c '\l'
         #  psql -h localhost -U poptape_address_test password=${{ secrets.TESTDB_PASSWORD }} < pg_schemas/poptape_address_db_schema.sql
-          psql -h localhost -U poptape_address_test password=${{ secrets.TESTDB_PASSWORD }} -a -f pg_schemas/poptape_address_db_schema.sql
+        #  psql -h localhost -U poptape_address_test password=${{ secrets.TESTDB_PASSWORD }} -a -f pg_schemas/poptape_address_db_schema.sql
         #  PGPASSWORD=${{ secrets.TESTDB_PASSWORD }} psql -U poptape_address_test -p 5432
         #  PGPASSWORD=${{ secrets.TESTDB_PASSWORD }} psql -U poptape_address_test -h postgres -d poptape_address_test < pg_schemas/poptape_address_db_schema.sql
         # psql -U poptape_address_test -p ${{ secrets.TESTDB_PASSWORD }} -d poptape_address_test -a -f pg_schemas/poptape_address_db_schema.sql
