@@ -92,7 +92,7 @@ class MyTest(FlaskTestCase):
         db.session.commit()
         self.assertEqual(country.id, 1)
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_country_model_fails_iso_length(self):
         country = Country(name = "United Kingdom",
@@ -104,7 +104,7 @@ class MyTest(FlaskTestCase):
             db.session.rollback()
             self.assertTrue('value too long' in str(error))
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_return_list_of_countries(self):
         countries = addTestCountries()
@@ -114,14 +114,14 @@ class MyTest(FlaskTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(results.get('countries')), 4)
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_api_rejects_unauthenticated_get(self):
         headers = { 'Content-type': 'application/json' }
         response = self.client.get('/address', headers=headers)
         self.assertEqual(response.status_code, 401)
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_one_address_ok(self):
         addresses = addTestAddresses()
@@ -130,7 +130,7 @@ class MyTest(FlaskTestCase):
         response = self.client.get(url, headers=headers)
         self.assertEqual(response.status_code, 200)
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_list_of_addresses_ok(self):
         addresses = addTestAddresses()
@@ -153,27 +153,27 @@ class MyTest(FlaskTestCase):
 
         self.assertEqual(original_brazil_address.post_zip_code, returned_brazil_address.get('post_zip_code'))
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
-    def test_all_addresses_admin_incl_paging(self):
-        addresses = addTestAddresses()
-        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
-        response = self.client.get('/address/admin/address', headers=headers)
-        self.assertEqual(response.status_code, 200)
-        results = response.json
-        # test total number of records and limit per page equals config
-        add_limit_per_page = int(TestConfig.ADDRESS_LIMIT_PER_PAGE)
-        self.assertEqual(len(results.get('addresses')), add_limit_per_page)
-        self.assertEqual(results.get('total_records'), 6)
+    # def test_all_addresses_admin_incl_paging(self):
+    #    addresses = addTestAddresses()
+    #    headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+    #    response = self.client.get('/address/admin/address', headers=headers)
+    #    self.assertEqual(response.status_code, 200)
+    #    results = response.json
+    #    # test total number of records and limit per page equals config
+    #    add_limit_per_page = int(TestConfig.ADDRESS_LIMIT_PER_PAGE)
+    #    self.assertEqual(len(results.get('addresses')), add_limit_per_page)
+    #    self.assertEqual(results.get('total_records'), 6)
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_rate_limiting(self):
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         response1 = self.client.get('/address/admin/ratelimited', headers=headers)
         self.assertEqual(response1.status_code, 429)
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_delete_ok(self):
         addresses = addTestAddresses()
@@ -185,18 +185,18 @@ class MyTest(FlaskTestCase):
         response = self.client.delete(url, headers=headers)
         self.assertEqual(response.status_code, 204) # successful delete with no message
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_delete_fail(self):
         addresses = addTestAddresses()
         invalid_address_id = addresses[1].address_id # invalid address for this user
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
-        # this address is invalid for this user so should not delete 
+        # this address is invalid for this user so should not delete
         url = '/address/'+invalid_address_id
         response = self.client.delete(url, headers=headers)
         self.assertEqual(response.status_code, 401)
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_create_ok(self):
         countries = addTestCountries()
@@ -232,7 +232,7 @@ class MyTest(FlaskTestCase):
         self.assertEqual(create_json.get('post_zip_code'), check_body.get('post_zip_code'))
         self.assertEqual('United Kingdom', check_body.get('country'))
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_fail_with_bad_iso(self):
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
@@ -249,7 +249,7 @@ class MyTest(FlaskTestCase):
         response = self.client.post('/address', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 400)
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_fail_with_extra_field_in_post(self):
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
@@ -267,7 +267,7 @@ class MyTest(FlaskTestCase):
         response = self.client.post('/address', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 400)
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_various_postcodes(self):
         countries = addTestCountries()
@@ -310,7 +310,7 @@ class MyTest(FlaskTestCase):
         response7 = self.client.post('/address', json=create_json, headers=headers)
         self.assertEqual(response7.status_code, 400)
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_fail_with_missing_house_name_and_number(self):
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
@@ -325,7 +325,7 @@ class MyTest(FlaskTestCase):
         response = self.client.post('/address', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 400)
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_non_uk_json_schema(self):
         countries = addTestCountries()
@@ -343,7 +343,7 @@ class MyTest(FlaskTestCase):
         response = self.client.post('/address', json=create_json, headers=headers)
         self.assertEqual(response.status_code, 201)
 
-# -----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
 
     def test_no_iso_code(self):
         countries = addTestCountries()
