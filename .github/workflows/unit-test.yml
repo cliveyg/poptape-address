@@ -64,4 +64,5 @@ jobs:
       - name: Test with pytest
         run: |
           touch poptape_address.log
-          pytest --cov=app app/tests
+          pytest --cov-report xml:coverage.xml --cov=app app/tests
+          coverage xml coverage.xml
