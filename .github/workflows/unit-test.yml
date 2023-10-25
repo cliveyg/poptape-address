@@ -58,7 +58,7 @@ jobs:
 
       - name: Create DB tables
         run: |
-          psql -h localhost -U poptape_address_test password=${{ secrets.TESTDB_PASSWORD }} -f pg_schemas/poptape_address_db_schema.sql
+          psql -h localhost -U poptape_address_test password=${{ secrets.TESTDB_PASSWORD }} -f db_schema/poptape_address_db_schema.sql
           psql -h localhost -U poptape_address_test password=${{ secrets.TESTDB_PASSWORD }} -c '\dt'
 
       - name: Test with pytest
