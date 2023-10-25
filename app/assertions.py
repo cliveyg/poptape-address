@@ -1,6 +1,6 @@
 import os.path
 import json
-from jsonschema import validate, draft202012_format_checker
+from jsonschema import validate, Draft7Validator
 from jsonschema.exceptions import ValidationError as JsonValidationError
 
 def assert_valid_schema(data, schema_type):
@@ -20,7 +20,7 @@ def assert_valid_schema(data, schema_type):
         else:
             schema = _load_json_schema('schemas/address_default.json')
 
-    return validate(data, schema, format_checker=draft202012_format_checker)
+    return validate(data, schema, format_checker=Draft7Validator.FORMAT_CHECKER)
 
 
 def _load_json_schema(filename):

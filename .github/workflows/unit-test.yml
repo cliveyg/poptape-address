@@ -65,4 +65,3 @@ jobs:
         run: |
           touch poptape_address.log
           coverage run -m pytest --cov=app app/tests
-          coverage report -m
