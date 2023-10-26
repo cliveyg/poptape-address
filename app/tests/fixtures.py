@@ -120,7 +120,7 @@ def addTestAddresses():
     db.session.add(address4)
     db.session.add(address5)
     db.session.add(address6)
-    addresses = [address1, address2, address3, address4]
+    addresses = [address1, address2, address3, address4, address5, address6]
     db.session.commit()
 
     return addresses
