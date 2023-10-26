@@ -108,6 +108,7 @@ class MyTest(FlaskTestCase):
 
     def test_return_list_of_countries(self):
         countries = addTestCountries()
+        self.assertEqual(len(countries), 4)
         headers = { 'Content-type': 'application/json' }
         response = self.client.get('/address/countries', headers=headers)
         results = response.json
@@ -155,16 +156,17 @@ class MyTest(FlaskTestCase):
 
     # -----------------------------------------------------------------------------
 
-    # def test_all_addresses_admin_incl_paging(self):
-    #    addresses = addTestAddresses()
-    #    headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
-    #    response = self.client.get('/address/admin/address', headers=headers)
-    #    self.assertEqual(response.status_code, 200)
-    #    results = response.json
-    #    # test total number of records and limit per page equals config
-    #    add_limit_per_page = int(TestConfig.ADDRESS_LIMIT_PER_PAGE)
-    #    self.assertEqual(len(results.get('addresses')), add_limit_per_page)
-    #    self.assertEqual(results.get('total_records'), 6)
+    def test_all_addresses_admin_incl_paging(self):
+        addresses = addTestAddresses()
+        self.assertEqual(len(addresses), 6)
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        response = self.client.get('/address/admin/address', headers=headers)
+        self.assertEqual(response.status_code, 200)
+        results = response.json
+        # test total number of records and limit per page equals config
+        add_limit_per_page = int(TestConfig.ADDRESS_LIMIT_PER_PAGE)
+        self.assertEqual(len(results.get('addresses')), add_limit_per_page)
+        self.assertEqual(results.get('total_records'), 6)
 
     # -----------------------------------------------------------------------------
 
@@ -200,6 +202,7 @@ class MyTest(FlaskTestCase):
 
     def test_create_ok(self):
         countries = addTestCountries()
+        self.assertEqual(len(countries), 4)
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         create_json = { 'public_id': getPublicID(),
                         'house_name': 'The Larches',
@@ -271,6 +274,7 @@ class MyTest(FlaskTestCase):
 
     def test_various_postcodes(self):
         countries = addTestCountries()
+        self.assertEqual(len(countries), 4)
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         create_json = { 'public_id': getPublicID(),
                         'house_name': 'The Larches',
@@ -329,6 +333,7 @@ class MyTest(FlaskTestCase):
 
     def test_non_uk_json_schema(self):
         countries = addTestCountries()
+        self.assertEqual(len(countries), 4)
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         create_json = { 'public_id': getPublicID(),
                         'house_name': 'The Larches',
@@ -347,6 +352,7 @@ class MyTest(FlaskTestCase):
 
     def test_no_iso_code(self):
         countries = addTestCountries()
+        self.assertEqual(len(countries), 4)
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         create_json = { 'public_id': getPublicID(),
                         'house_name': 'The Larches',

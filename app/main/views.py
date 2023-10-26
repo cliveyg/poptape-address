@@ -236,8 +236,9 @@ def get_all_addresses_admin_method(public_id, request):
                                      Country.iso_code,
                                      Address.post_zip_code)\
                                             .join(Country)\
-                                            .paginate(page,\
-                                                      addresses_per_page, False).items
+                                            .paginate(page=page,\
+                                                      per_page=addresses_per_page,\
+                                                      error_out=False).items
 
     except:
         return jsonify({ 'message': 'oopsy, sorry we couldn\'t complete your request' }), 500
