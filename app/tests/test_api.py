@@ -166,7 +166,7 @@ class MyTest(FlaskTestCase):
         # test total number of records and limit per page equals config
         add_limit_per_page = int(TestConfig.ADDRESS_LIMIT_PER_PAGE)
         self.assertEqual(len(results.get('addresses')), add_limit_per_page)
-        self.assertEqual(results.get('total_records'), 4)
+        self.assertEqual(results.get('total_records'), 6)
 
     # -----------------------------------------------------------------------------
 
