@@ -12,14 +12,14 @@ services:
       - "1238:8011"
     restart: always
     volumes:
-      - ${LOGFILE}
+      - ${LOCAL_LOG_LOC}:/addresses/log
     logging:
       driver: "json-file"
       options:
         max-size: "10Mb"
         max-file: "5"
     networks:
-      - net_poptape
+      - poptape
   db:
     #image: poptape/address/db:v0.1
     image: postgres:alpine
@@ -31,12 +31,12 @@ services:
     ports:
       - "1239:5432"
     volumes:
-      - poptape_datavolume:/var/lib/postgresql/data
+      - poptape_address_data:/var/lib/postgresql/data
     networks:
-      - net_poptape
+      - poptape
 networks:
-  net_poptape:
+  poptape:
     external: true
 volumes:
-  poptape_datavolume:
+  poptape_address_data:
   
