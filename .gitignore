@@ -42,3 +42,5 @@
 !app/tests/load_countries_into_test.py
 !app/.env.example
 !.gitignore
+!.github/codeql.yml
+!.github/unit-test.yml
