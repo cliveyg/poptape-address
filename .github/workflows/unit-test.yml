@@ -65,5 +65,5 @@ jobs:
         run: |
           touch poptape_address.log
           coverage run -m pytest -v
-          covRes="$(coverage report -m --fail-under=95)"
+          covRes="$(coverage report -m --fail-under=99)"
           echo "$covRes"
