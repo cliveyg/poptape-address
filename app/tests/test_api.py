@@ -244,6 +244,15 @@ class MyTest(FlaskTestCase):
 
     # -----------------------------------------------------------------------------
 
+    def test_create_fail_not_json_content_type(self):
+        countries = addTestCountries()
+        self.assertEqual(len(countries), 4)
+        headers = { 'Content-type': 'application/html', 'x-access-token': 'somefaketoken' }
+        create_json = {'blah': 'meep'}
+        response = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 400)
+
+    # -----------------------------------------------------------------------------
     def test_fail_with_bad_iso(self):
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         create_json = { 'public_id': getPublicID(),
