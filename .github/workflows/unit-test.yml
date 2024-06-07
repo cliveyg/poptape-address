@@ -67,6 +67,6 @@ jobs:
           coverage run -m pytest -v
           covRes="$(coverage report -m --fail-under=99)
           echo "$covRes"
-          if [ echo "$covRes" | grep -q 'is less than fail-under']; then
+          if [ echo "$covRes" | grep "is less than fail-under"]; then
             exit 1
           fi
