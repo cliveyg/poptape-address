@@ -65,7 +65,7 @@ jobs:
         run: |
           touch poptape_address.log
           coverage run -m pytest -v
-          covRes="$(coverage report -m --fail-under=99)
+          covRes="$(coverage report -m --fail-under=99)"
           echo "$covRes"
           if [ echo "$covRes" | grep "is less than fail-under"]; then
             exit 1
