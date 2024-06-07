@@ -187,6 +187,13 @@ class MyTest(FlaskTestCase):
 
     # -----------------------------------------------------------------------------
 
+    def test_all_addresses_admin_no_addresses_returned(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        response = self.client.get('/address/admin/address', headers=headers)
+        self.assertEqual(response.status_code, 404)
+
+    # -----------------------------------------------------------------------------
+
     def test_rate_limiting(self):
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         response1 = self.client.get('/address/admin/ratelimited', headers=headers)
