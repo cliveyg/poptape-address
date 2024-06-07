@@ -217,6 +217,16 @@ class MyTest(FlaskTestCase):
 
     # -----------------------------------------------------------------------------
 
+    def test_alternative_delete_fail(self):
+        invalid_address_id = str(uuid.uuid4())
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        # this address is valid uuid but doesn't exist in db so should not delete
+        url = '/address/'+invalid_address_id
+        response = self.client.delete(url, headers=headers)
+        self.assertEqual(response.status_code, 401)
+
+    # -----------------------------------------------------------------------------
+
     def test_create_ok(self):
         countries = addTestCountries()
         self.assertEqual(len(countries), 4)
