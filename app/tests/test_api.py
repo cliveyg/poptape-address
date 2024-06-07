@@ -124,6 +124,14 @@ class MyTest(FlaskTestCase):
 
     # -----------------------------------------------------------------------------
 
+    def test_zero_address_ok(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        url = '/address
+        response = self.client.get(url, headers=headers)
+        self.assertEqual(response.status_code, 404)
+
+    # -----------------------------------------------------------------------------
+
     def test_one_address_ok(self):
         addresses = addTestAddresses()
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
@@ -141,7 +149,7 @@ class MyTest(FlaskTestCase):
         # expect the number of returned addresses to be 3 as we are filtering by public_id
         results = response.json
         self.assertEqual(len(results.get('addresses')), 3)
-        # get the retuned address with country name of Brazil and check the returned data matches
+        # get the returned address with country name of Brazil and check the returned data matches
         original_brazil_address = None
         for addy in addresses:
             if addy.country_id == 3:
