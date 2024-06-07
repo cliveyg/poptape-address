@@ -62,8 +62,11 @@ jobs:
           psql -h localhost -U poptape_address_test password=${{ secrets.TESTDB_PASSWORD }} -c '\dt'
 
       - name: Test with pytest
+        # the bash script doesn't print coverage report if fail-under flag is set and the
+        # test fails coverage it gives an exit code of 2 and immediately stops without printing report
+        # hence running it twice so I can see what lines are missing from coverage
         run: |
           touch poptape_address.log
           coverage run -m pytest -v
-          covRes="$(coverage report -m --fail-under=99)"
-          echo "$covRes"
+          echo "$(coverage report -m )"
+          echo "$(coverage report -m --fail-under=99)"
