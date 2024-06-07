@@ -244,12 +244,12 @@ class MyTest(FlaskTestCase):
 
     # -----------------------------------------------------------------------------
 
-    def test_create_fail_not_json_content_type(self):
+    def test_create_fail_not_valid_json(self):
         countries = addTestCountries()
         self.assertEqual(len(countries), 4)
-        headers = { 'Content-type': 'application/html', 'x-access-token': 'somefaketoken' }
-        create_json = {'blah': 'meep'}
-        response = self.client.post('/address', json=create_json, headers=headers)
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        create_not_json = "blah blah"
+        response = self.client.post('/address', json=create_not_json, headers=headers)
         self.assertEqual(response.status_code, 400)
 
     # -----------------------------------------------------------------------------
