@@ -128,7 +128,6 @@ def get_create_address_for_user(public_id, request):
 @require_access_level(10, request)
 def get_one_address(public_id, request, address_id):
 
-    # convert to string
     address_id = str(address_id)
     address = None
     try:

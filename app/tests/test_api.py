@@ -140,6 +140,15 @@ class MyTest(FlaskTestCase):
 
     # -----------------------------------------------------------------------------
 
+    def test_no_address_found(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        url = '/address/'+str(uuid.uuid4())
+        response = self.client.get(url, headers=headers)
+        self.assertEqual(response.status_code, 404)
+
+    # -----------------------------------------------------------------------------
+
+
     def test_list_of_addresses_ok(self):
         addresses = addTestAddresses()
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
@@ -244,13 +253,13 @@ class MyTest(FlaskTestCase):
 
     # -----------------------------------------------------------------------------
 
-    def test_create_fail_not_valid_json(self):
+    def test_create_fail_not_json_content_type(self):
         countries = addTestCountries()
         self.assertEqual(len(countries), 4)
-        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
-        create_not_json = 'blah blah'
-        response = self.client.post('/address', json=create_not_json, headers=headers)
-        self.assertEqual(response.status_code, 500)
+        headers = { 'Content-type': 'application/html', 'x-access-token': 'somefaketoken' }
+        create_json = {'blah': 'meep'}
+        response = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 400)
 
     # -----------------------------------------------------------------------------
     def test_fail_with_bad_iso(self):
