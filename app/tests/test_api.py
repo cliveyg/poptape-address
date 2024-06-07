@@ -126,8 +126,7 @@ class MyTest(FlaskTestCase):
 
     def test_zero_address_ok(self):
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
-        url = '/address
-        response = self.client.get(url, headers=headers)
+        response = self.client.get('/address', headers=headers)
         self.assertEqual(response.status_code, 404)
 
     # -----------------------------------------------------------------------------
