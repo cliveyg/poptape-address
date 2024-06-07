@@ -187,6 +187,19 @@ class MyTest(FlaskTestCase):
 
     # -----------------------------------------------------------------------------
 
+    def test_all_addresses_admin_paging_prev_next_urls(self):
+        addresses = addTestAddresses()
+        self.assertEqual(len(addresses), 6)
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        response = self.client.get('/address/admin/address?page=2', headers=headers)
+        self.assertEqual(response.status_code, 200)
+        results = response.json
+        # test prev url exists and is correct
+        self.assertEqual(results.get('prev_url'), '/address/admin/address?page=1')
+        self.assertEqual(results.get('next_url'), '/address/admin/address?page=3')
+        self.assertEqual(results.get('total_records'), 6)
+
+    # -----------------------------------------------------------------------------
     def test_all_addresses_admin_no_addresses_returned(self):
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         response = self.client.get('/address/admin/address', headers=headers)
@@ -196,8 +209,15 @@ class MyTest(FlaskTestCase):
 
     def test_rate_limiting(self):
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
-        response1 = self.client.get('/address/admin/ratelimited', headers=headers)
-        self.assertEqual(response1.status_code, 429)
+        response = self.client.get('/address/admin/ratelimited', headers=headers)
+        self.assertEqual(response.status_code, 429)
+
+    # -----------------------------------------------------------------------------
+
+    def test_everything_left(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        response = self.client.get('/address/blah/meep/boop', headers=headers)
+        self.assertEqual(response.status_code, 404)
 
     # -----------------------------------------------------------------------------
 
