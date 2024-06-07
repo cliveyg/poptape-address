@@ -3,6 +3,7 @@ from mock import patch
 from .fixtures import addTestCountries, addTestAddresses, getPublicID
 from functools import wraps
 from flask import jsonify
+import uuid
 
 # have to mock the require_access_level decorator here before it
 # gets attached to any classes or functions
