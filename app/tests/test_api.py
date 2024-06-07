@@ -71,6 +71,13 @@ class MyTest(FlaskTestCase):
 
 # -----------------------------------------------------------------------------
 
+    def test_bad_method_ok(self):
+        headers = { 'Content-type': 'application/json' }
+        response = self.client.delete('/address/status', headers=headers)
+        self.assertEqual(response.status_code, 405)
+
+# -----------------------------------------------------------------------------
+
     def test_404(self):
         # this behaviour is slightly different to live as we've mocked the 
         headers = { 'Content-type': 'application/json' }
