@@ -42,7 +42,7 @@ jobs:
 
       - uses: actions/checkout@v4
       - name: Setting up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -64,5 +64,6 @@ jobs:
       - name: Test with pytest
         run: |
           touch poptape_address.log
-          coverage run -m pytest --cov=app app/tests
-          echo "$(coverage report --show-missing)"
+          coverage run -m pytest -v
+          covRes="$(coverage report -m --fail-under=95)"
+          echo "$covRes"
