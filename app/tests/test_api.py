@@ -3,6 +3,7 @@ from mock import patch
 from .fixtures import addTestCountries, addTestAddresses, getPublicID
 from functools import wraps
 from flask import jsonify
+import uuid
 
 # have to mock the require_access_level decorator here before it
 # gets attached to any classes or functions
@@ -70,6 +71,13 @@ class MyTest(FlaskTestCase):
 
 # -----------------------------------------------------------------------------
 
+    def test_bad_method_ok(self):
+        headers = { 'Content-type': 'application/json' }
+        response = self.client.delete('/address/status', headers=headers)
+        self.assertEqual(response.status_code, 405)
+
+# -----------------------------------------------------------------------------
+
     def test_404(self):
         # this behaviour is slightly different to live as we've mocked the 
         headers = { 'Content-type': 'application/json' }
@@ -124,6 +132,13 @@ class MyTest(FlaskTestCase):
 
     # -----------------------------------------------------------------------------
 
+    def test_zero_address_ok(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        response = self.client.get('/address', headers=headers)
+        self.assertEqual(response.status_code, 404)
+
+    # -----------------------------------------------------------------------------
+
     def test_one_address_ok(self):
         addresses = addTestAddresses()
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
@@ -133,6 +148,15 @@ class MyTest(FlaskTestCase):
 
     # -----------------------------------------------------------------------------
 
+    def test_no_address_found(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        url = '/address/'+str(uuid.uuid4())
+        response = self.client.get(url, headers=headers)
+        self.assertEqual(response.status_code, 404)
+
+    # -----------------------------------------------------------------------------
+
+
     def test_list_of_addresses_ok(self):
         addresses = addTestAddresses()
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
@@ -141,7 +165,7 @@ class MyTest(FlaskTestCase):
         # expect the number of returned addresses to be 3 as we are filtering by public_id
         results = response.json
         self.assertEqual(len(results.get('addresses')), 3)
-        # get the retuned address with country name of Brazil and check the returned data matches
+        # get the returned address with country name of Brazil and check the returned data matches
         original_brazil_address = None
         for addy in addresses:
             if addy.country_id == 3:
@@ -170,10 +194,37 @@ class MyTest(FlaskTestCase):
 
     # -----------------------------------------------------------------------------
 
+    def test_all_addresses_admin_paging_prev_next_urls(self):
+        addresses = addTestAddresses()
+        self.assertEqual(len(addresses), 6)
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        response = self.client.get('/address/admin/address?page=2', headers=headers)
+        self.assertEqual(response.status_code, 200)
+        results = response.json
+        # test prev url exists and is correct
+        self.assertEqual(results.get('prev_url'), '/address/admin/address?page=1')
+        self.assertEqual(results.get('next_url'), '/address/admin/address?page=3')
+        self.assertEqual(results.get('total_records'), 6)
+
+    # -----------------------------------------------------------------------------
+    def test_all_addresses_admin_no_addresses_returned(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        response = self.client.get('/address/admin/address', headers=headers)
+        self.assertEqual(response.status_code, 404)
+
+    # -----------------------------------------------------------------------------
+
     def test_rate_limiting(self):
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
-        response1 = self.client.get('/address/admin/ratelimited', headers=headers)
-        self.assertEqual(response1.status_code, 429)
+        response = self.client.get('/address/admin/ratelimited', headers=headers)
+        self.assertEqual(response.status_code, 429)
+
+    # -----------------------------------------------------------------------------
+
+    def test_everything_left(self):
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        response = self.client.get('/address/blah/meep/boop', headers=headers)
+        self.assertEqual(response.status_code, 404)
 
     # -----------------------------------------------------------------------------
 
@@ -194,6 +245,16 @@ class MyTest(FlaskTestCase):
         invalid_address_id = addresses[1].address_id # invalid address for this user
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         # this address is invalid for this user so should not delete
+        url = '/address/'+invalid_address_id
+        response = self.client.delete(url, headers=headers)
+        self.assertEqual(response.status_code, 401)
+
+    # -----------------------------------------------------------------------------
+
+    def test_alternative_delete_fail(self):
+        invalid_address_id = str(uuid.uuid4())
+        headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
+        # this address is valid uuid but doesn't exist in db so should not delete
         url = '/address/'+invalid_address_id
         response = self.client.delete(url, headers=headers)
         self.assertEqual(response.status_code, 401)
@@ -237,6 +298,15 @@ class MyTest(FlaskTestCase):
 
     # -----------------------------------------------------------------------------
 
+    def test_create_fail_not_json_content_type(self):
+        countries = addTestCountries()
+        self.assertEqual(len(countries), 4)
+        headers = { 'Content-type': 'application/html', 'x-access-token': 'somefaketoken' }
+        create_json = {'blah': 'meep'}
+        response = self.client.post('/address', json=create_json, headers=headers)
+        self.assertEqual(response.status_code, 400)
+
+    # -----------------------------------------------------------------------------
     def test_fail_with_bad_iso(self):
         headers = { 'Content-type': 'application/json', 'x-access-token': 'somefaketoken' }
         create_json = { 'public_id': getPublicID(),
