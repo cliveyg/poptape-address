@@ -1,7 +1,5 @@
 # poptape-address
-![All unit tests pass](https://github.com/cliveyg/poptape-address/actions/workflows/unit-test.yml/badge.svg) ![Successfully deployed](https://github.com/cliveyg/poptape-address/actions/workflows/post-merge-deployment.yml/badge.svg)
-
-![Tests passed](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/cliveyg/60b6fa4efc8e71a0dae17eee4b2949df/raw/1a5e0ea32bf48ef0e7311f8d4a3e304aa5dd9e6c/poptape-address-junit-tests.json&label=Tests)
+![All unit tests pass](https://github.com/cliveyg/poptape-address/actions/workflows/unit-test.yml/badge.svg) ![Successfully deployed](https://github.com/cliveyg/poptape-address/actions/workflows/post-merge-deployment.yml/badge.svg) ![Tests passed](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/cliveyg/60b6fa4efc8e71a0dae17eee4b2949df/raw/1a5e0ea32bf48ef0e7311f8d4a3e304aa5dd9e6c/poptape-address-junit-tests.json&label=Tests) ![Test coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/cliveyg/60b6fa4efc8e71a0dae17eee4b2949df/raw/e9c34dd892f53cec1dd64f4eebf827cc585a273d/poptape-address-cobertura-coverage.json&label=Test%20Coverage)
 
 Address microservice written in Python Flask
 
