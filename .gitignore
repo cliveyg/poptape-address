@@ -16,6 +16,8 @@
 # Un-ignore these files - it's bit of a clonky way to do it but it's more secure
 !app/
 !db_schema/
+!reports/junit.xml
+!reports/report.html
 !Dockerfile
 !docker-compose.yml
 !addresses.py
@@ -45,3 +47,4 @@
 !.gitignore
 !.github/workflows/codeql.yml
 !.github/workflows/unit-test.yml
+!.github/workflows/post-merge-deployment.yml
