@@ -1,5 +1,5 @@
 # poptape-address
-![All unit tests pass](https://github.com/cliveyg/poptape-address/actions/workflows/unit-test.yml/badge.svg) ![Successfully deployed](https://github.com/cliveyg/poptape-address/actions/workflows/post-merge-deployment.yml/badge.svg)
+![All unit tests pass](https://github.com/cliveyg/poptape-address/actions/workflows/unit-test.yml/badge.svg) ![Successfully deployed](https://github.com/cliveyg/poptape-address/actions/workflows/post-merge-deployment.yml/badge.svg) [![Tests Status](./reports/tests-badge.svg?dummy=8484744)](./reports/report.html)
 
 Address microservice written in Python Flask
 
