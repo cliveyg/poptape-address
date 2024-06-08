@@ -16,6 +16,7 @@
 # Un-ignore these files - it's bit of a clonky way to do it but it's more secure
 !app/
 !db_schema/
+!coverage.svg
 !reports/junit.xml
 !reports/report.html
 !Dockerfile
