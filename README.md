@@ -1,4 +1,6 @@
 # poptape-address
+![All unit tests pass](https://github.com/cliveyg/poptape-address/actions/workflows/unit-test.yml/badge.svg) ![Successfully deployed](https://github.com/cliveyg/poptape-address/actions/workflows/post-merge-deployment.yml/badge.svg)
+
 Address microservice written in Python Flask
 
 This microservice validates and stores address data in a Postgres database.
