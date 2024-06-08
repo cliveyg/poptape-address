@@ -15,6 +15,7 @@ Flask-Migrate
 Flask-SQLAlchemy
 Flask-Testing
 Flask-UUID
+genbadge[all]
 gunicorn
 idna
 importlib-metadata
