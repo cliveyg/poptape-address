@@ -67,7 +67,7 @@ jobs:
         # hence running it twice so I can see what lines are missing from coverage
         run: |
           touch poptape_address.log
-          coverage run -m pytest -v --cov=app tests/ --junitxml=junit.xml --html=report.html
+          coverage run -m pytest -v --cov=tests --junitxml=junit.xml --html=report.html
           echo "$(coverage report -m )"
           covRes="$(coverage report -m --fail-under=95)"
           echo "$covRes"
