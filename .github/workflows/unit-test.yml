@@ -72,3 +72,8 @@ jobs:
           covRes="$(coverage report -m --fail-under=95)"
           echo "$covRes"
 
+      - name: Create coverage badges
+        uses: gaelgirodon/ci-badges-action@v1
+        with:
+          gist-id: 60b6fa4efc8e71a0dae17eee4b2949df
+          token: ${{ secrets.GIST_TOKEN }}
