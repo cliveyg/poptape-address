@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9] # Using a list so it's extensible for future use
+        python-version: ['3.12'] # Using a list so it's extensible for future use
     services:
       # label used to access the service container
       postgres:
@@ -51,8 +51,8 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      # have to create an .env file to be able to run unit tests
-      - name: Create .env file from github secrets
+      # have to create an .OLDenv file to be able to run unit tests
+      - name: Create .OLDenv file from github secrets
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
 

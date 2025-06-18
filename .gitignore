@@ -3,7 +3,7 @@
 /vadd/*
 /addresses/log
 /app/.env
-.env
+.OLDenv
 /app/.DS_Store
 /.pytest_cache/
 /__pycache__/
